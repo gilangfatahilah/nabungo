@@ -1,5 +1,5 @@
 import { NavItem } from '@/types';
-import { ArrowLeftRight, ClipboardList, FileClock, HandCoins, LayoutGrid, SquarePercent, WalletMinimal, } from 'lucide-vue-next';
+import { ArrowLeftRight, Blocks, ClipboardList, FileClock, HandCoins, LayoutGrid, SquarePercent, WalletMinimal, } from 'lucide-vue-next';
 
 const mainNavItems: NavItem[] = [
   {
@@ -16,6 +16,11 @@ const mainNavItems: NavItem[] = [
     title: 'Budget',
     href: '/budget',
     icon: ClipboardList,
+  },
+  {
+    title: 'Category',
+    href: '/category',
+    icon: Blocks,
   },
   {
     title: 'Goal',

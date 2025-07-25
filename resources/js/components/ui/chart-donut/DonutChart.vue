@@ -63,7 +63,7 @@ const totalValue = computed(() => props.data.reduce((prev, curr) => {
   <div :class="cn('w-full h-48 flex flex-col items-end', $attrs.class ?? '')">
     <VisSingleContainer
       :style="{ height: isMounted ? '100%' : 'auto' }"
-      :margin="{ left: 20, right: 20 }"
+      :margin="{ left: 0, right: 0 }"
       :data="data"
     >
       <ChartSingleTooltip

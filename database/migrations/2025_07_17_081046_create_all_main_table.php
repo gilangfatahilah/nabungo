@@ -85,6 +85,18 @@ return new class extends Migration {
       $table->text('notes')->nullable();
       $table->timestamps();
     });
+
+    Schema::create('goals', function (Blueprint $table) {
+      $table->id();
+      $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+      $table->string('title');
+      $table->decimal('target_amount', 20, 2);
+      $table->decimal('saved_amount', 20, 2)->default(0);
+      $table->date('due_date')->nullable();
+      $table->text('notes')->nullable();
+      $table->enum('status', ['ongoing', 'achieved', 'cancelled'])->default('ongoing');
+      $table->timestamps();
+  });
   }
 
   public function down(): void
@@ -96,5 +108,6 @@ return new class extends Migration {
     Schema::dropIfExists('transactions');
     Schema::dropIfExists('categories');
     Schema::dropIfExists('accounts');
+    Schema::dropIfExists('goals');
   }
 };

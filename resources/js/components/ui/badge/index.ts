@@ -12,9 +12,13 @@ export const badgeVariants = cva(
         secondary:
           'border-transparent bg-secondary text-secondary-foreground [a&]:hover:bg-secondary/90',
         destructive:
-         'border-transparent bg-destructive text-white [a&]:hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60',
+          'border-transparent bg-destructive text-white [a&]:hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60',
         outline:
           'text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground',
+        'a-info': 'text-foreground bg-sky-400/50 border-sky-500 [a&]:hover:bg-accent [a&]:hover:text-accent-foreground rounded-sm',
+        'a-success': 'text-foreground bg-emerald-400/50 border-emerald-500 [a&]:hover:bg-accent [a&]:hover:text-accent-foreground rounded-sm',
+        'a-error': 'text-foreground bg-rose-400/50 border-rose-500 [a&]:hover:bg-accent [a&]:hover:text-accent-foreground rounded-sm',
+        'a-warning': 'text-foreground bg-amber-400/50 border-amber-500 [a&]:hover:bg-accent [a&]:hover:text-accent-foreground rounded-sm'
       },
     },
     defaultVariants: {

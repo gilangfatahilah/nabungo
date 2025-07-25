@@ -25,7 +25,7 @@ const data = [
   <Card class="h-full py-2 !gap-2">
     <CardHeader>
       <div class="flex justify-between items-center pb-0">
-        <CardTitle class="font-normal text-muted-foreground"> Balance </CardTitle>
+        <CardTitle class="font-normal text-muted-foreground"> Net Worth </CardTitle>
 
         <Button variant="ghost" size="sm" class="font-semibold text-sm cursor-pointer"
           >View More</Button

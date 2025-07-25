@@ -1,16 +1,13 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
 import AppLayout from '@/layouts/AppLayout.vue';
-import Chart from './dashboard/partials/IncomeExpenseChart.vue';
-import PeriodSelect from './dashboard/partials/PeriodSelect.vue';
-import StatsCard from './dashboard/partials/StatsCard.vue';
-import AllocationChart from './dashboard/partials/AllocationChart.vue';
-import { formatIdr } from '@/lib/utils';
+import Chart from './partials/IncomeExpenseChart.vue';
+import PeriodSelect from './partials/PeriodSelect.vue';
+import StatsCard from './partials/StatsCard.vue';
+import AllocationChart from './partials/AllocationChart.vue';
+import MainBalanceCard from './partials/MainBalanceCard.vue';
+import MonthlyBudgetCard from './partials/MonthlyBudgetCard.vue';
 import { type BreadcrumbItem } from '@/types';
-import PlaceholderPattern from '@/components/PlaceholderPattern.vue';
-import MainBalanceCard from './dashboard/partials/MainBalanceCard.vue';
-import MonthlyBudgetCard from './dashboard/partials/MonthlyBudgetCard.vue';
-import FullCalendar from '@/components/FullCalendar.vue';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
