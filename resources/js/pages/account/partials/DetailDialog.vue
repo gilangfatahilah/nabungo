@@ -1,18 +1,49 @@
 <script setup lang="ts">
+import { ref, watch } from "vue";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { formatIdr } from "@/lib/utils";
 import { Account } from "@/types";
-import { BanknoteArrowDown, BanknoteArrowUp } from "lucide-vue-next";
+import { BanknoteArrowDown, BanknoteArrowUp, LoaderCircle } from "lucide-vue-next";
 import { getTypeLabel, getIconType } from "./column";
 
 interface Props {
   data: Account;
 }
 
-defineProps<Props>();
+interface Summary {
+  income: number;
+  expense: number;
+  formattedIncome: string;
+  formattedExpense: string;
+}
+
+const { data } = defineProps<Props>();
 const open = defineModel<boolean>("open");
+
+const summary = ref<Summary | null>(null);
+const summaryLoading = ref<boolean>(false);
+
+watch(open, async (newVal) => {
+  if (newVal) {
+    summaryLoading.value = true;
+    try {
+      const response = await fetch(route("account.transaction-summary", { id: data.id }));
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const result = await response.json();
+
+      console.log("Transaction Summary:", result);
+      summary.value = result.data;
+    } catch (error) {
+      console.error("Failed to fetch transaction summary:", error);
+    } finally {
+      summaryLoading.value = false;
+    }
+  }
+});
 </script>
 
 <template>
@@ -40,7 +71,7 @@ const open = defineModel<boolean>("open");
           </p>
 
           <p class="font-lato font-semibold tracking-wide">
-            {{ formatIdr(6000000, true) }}
+            {{ summaryLoading ? "Loading..." : formatIdr(summary?.income ?? 0, true) }}
           </p>
         </div>
         <div class="flex flex-col gap-2">
@@ -50,7 +81,7 @@ const open = defineModel<boolean>("open");
           </p>
 
           <p class="font-lato font-semibold tracking-wide">
-            {{ formatIdr(550000, true) }}
+            {{ summaryLoading ? "Loading..." : formatIdr(summary?.expense ?? 0, true) }}
           </p>
         </div>
       </div>

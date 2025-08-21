@@ -98,6 +98,35 @@ interface Category {
   updated_at: string;
 }
 
-export { TableResponse, PageQuery, User, Account, Category }
+interface Budget {
+  id: number;
+  user_id: number;
+  category_id: number;
+  category: Category;
+  month: string;
+  amount: number;
+  created_at: string;
+  updated_at: string;
+}
+
+interface Transaction {
+  id: number;
+  user_id: number;
+  category_id: number;
+  account_id: number;
+  account_target_id?: number;
+  type: 'income' | 'expense' | 'transfer';
+  amount: number;
+  description?: string;
+  transaction_date: string;
+  created_at: string;
+  updated_at: string;
+  user: User;
+  category: Category;
+  account: Account;
+  account_target?: Account;
+}
+
+export { TableResponse, PageQuery, User, Account, Category, Budget, Transaction }
 
 export type BreadcrumbItemType = BreadcrumbItem;

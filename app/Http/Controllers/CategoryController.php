@@ -92,4 +92,25 @@ class CategoryController extends Controller
 
     return to_route('category.index');
   }
+
+  public function options(Request $request)
+  {
+    $query = Category::query()->select('id', 'name');
+
+    if ($request->filled('type')) {
+      $query->where('type', $request->type);
+    }
+
+    $categories = $query->get()->map(function ($category) {
+      return [
+        'label' => $category->name,
+        'value' => $category->id,
+      ];
+    });
+
+    return response()->json([
+      'success' => true,
+      'data' => $categories,
+    ]);
+  }
 }

@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\FilterParser;
+use App\Helpers\QueryFilters;
 use App\Models\Account;
 use App\Http\Requests\Account\StoreRequest;
 use App\Http\Requests\Account\UpdateRequest;
-
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -27,6 +29,9 @@ class AccountController extends Controller
    */
   public function index(Request $request)
   {
+    $schema = FilterParser::getFilterSchema(Account::class);
+    $filters = FilterParser::parseFilters($request->get('filters', []), $schema);
+
     $query = Account::query()
       ->where('user_id', Auth::id());
 
@@ -34,12 +39,20 @@ class AccountController extends Controller
       $query->where('name', 'LIKE', '%' . $request->get('search') . '%');
     }
 
+    if (!empty($filters)) {
+      $query = QueryFilters::apply($query, $filters, $schema);
+    }
+
     $accounts = $query->orderBy('created_at', 'desc')
       ->paginate($request->get('per_page', 10))
       ->withQueryString();
 
+    $filterSchema = FilterParser::prepareFilterSchemaForFrontend($schema);
+
     return Inertia::render('account/Index', [
       'accounts' => $accounts,
+      'filters' => $filters,
+      'filterSchema' => $filterSchema,
       'query' => $request->query(),
     ]);
   }
@@ -97,5 +110,66 @@ class AccountController extends Controller
 
     Account::whereIn('id', $request->input('ids'))->delete();
     return to_route('account.index');
+  }
+
+  public function options(Request $request)
+  {
+    $query = Account::query()->select('id', 'name', 'balance');
+
+    if ($request->filled('type')) {
+      $query->whereIn('type', $request->input('type'));
+    }
+
+    $accounts = $query->get()->map(function ($account) {
+      return [
+        'label' => $account->name . " - (Rp" . number_format($account->balance, 2) . ")",
+        'value' => $account->id
+      ];
+    });
+
+    return response()->json([
+      'success' => true,
+      'data' => $accounts,
+    ]);
+  }
+
+  public function transactionSummary(Account $account, Request $request)
+  {
+    $this->authorizeAccess($account);
+
+    $month = $request->input('month', now()->month);
+    $year = $request->input('year', now()->year);
+
+    $totalIncome = Transaction::where('account_id', $account->id)
+      ->where('type', 'income')
+      ->whereMonth('transaction_date', $month)
+      ->whereYear('transaction_date', $year)
+      ->sum('amount');
+
+    $totalExpense = Transaction::where('account_id', $account->id)
+      ->where('type', 'expense')
+      ->whereMonth('transaction_date', $month)
+      ->whereYear('transaction_date', $year)
+      ->sum('amount');
+
+    $totalTransferIn = Transaction::where('account_target_id', $account->id)
+      ->where('type', 'transfer')
+      ->whereMonth('transaction_date', $month)
+      ->whereYear('transaction_date', $year)
+      ->sum('amount');
+
+    $totalTransferOut = Transaction::where('account_id', $account->id)
+      ->where('type', 'transfer')
+      ->whereMonth('transaction_date', $month)
+      ->whereYear('transaction_date', $year)
+      ->sum('amount');
+
+    return response()->json([
+      'success' => true,
+      'data' => [
+        'income' => $totalIncome + $totalTransferIn,
+        'expense' => $totalExpense + $totalTransferOut,
+      ],
+    ]);
   }
 }

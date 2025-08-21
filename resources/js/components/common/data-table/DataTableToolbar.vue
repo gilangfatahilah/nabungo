@@ -3,52 +3,75 @@ import { Button } from "@/components/ui/button";
 import type { Table } from "@tanstack/vue-table";
 
 import { Input } from "@/components/ui/input";
-import { CircleX, Search, Trash2 } from "lucide-vue-next";
-import { computed, inject, ref } from "vue";
-// import { priorities, statuses } from '../../../Pages/Role/data/data'
-// import DataTableFacetedFilter from './DataTableFacetedFilter.vue'
+import { FunnelPlus, FunnelX, Search, Trash2 } from "lucide-vue-next";
+import { computed, inject, onMounted, ref } from "vue";
 import { router } from "@inertiajs/vue3";
-import { CalendarDate, parseDate } from "@internationalized/date";
 import DataTableViewOptions from "./DataTableViewOptions.vue";
-import DateRangePicker from "@/components/DateRangePicker.vue";
 import ConfirmationDialog from "../dialog/ConfirmationDialog.vue";
 import { toast } from "vue-sonner";
+import MonthRange from "../popover/MonthRange.vue";
+import DataTableFilter, { FieldOption, FilterRow } from "./DataTableFilter2.vue";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
 }
 
-interface QueryParams {
+export interface QueryParams {
   search: string;
   page: number;
   per_page: number;
   start_date: string;
+  start_month: string;
   end_date: string;
+  end_month: string;
 }
 
 const props = defineProps<DataTableToolbarProps<any>>();
 
-const isFiltered = computed(() => props.table.getState().columnFilters.length > 0);
-
+/**
+ * Injected properties
+ */
 const url = inject("url") as { index: string; destroy: string };
 const query = inject("query") as QueryParams;
-const filterDate = inject("filter-date") ?? false;
+const filterSchema = inject("filter-schema") as FieldOption[];
+const filterMonth = inject("filter-month") ?? false;
+const defaultFilters = inject("filters") as FilterRow[] | undefined;
 
-const today = new CalendarDate(
-  new Date().getFullYear(),
-  new Date().getMonth() + 1,
-  new Date().getDate()
-);
-
+/**
+ * Variables section
+ */
 const selectedRow = computed(() => props.table.getSelectedRowModel());
-
 const loading = ref<boolean>(false);
 const confirmationDialogOpen = ref<boolean>(false);
 const search = ref(query?.search ?? "");
-const range = ref({
-  start: query.start_date ? parseDate(query.start_date) : today,
-  end: query.end_date ? parseDate(query.end_date) : today.add({ days: 7 }),
-});
+const showFilter = ref<boolean>(false);
+const filters = ref<FilterRow[]>(defaultFilters ?? []);
+const resetFilters = ref<boolean>(false);
+
+/**
+ * request handling section
+ */
+
+const handleReset = () => {
+  search.value = "";
+  filters.value = [];
+  resetFilters.value = true;
+
+  router.get(
+    route(url.index, {
+      page: query.page ?? 1,
+      per_page: query.per_page ?? 10,
+    }),
+    {},
+    {
+      preserveScroll: true,
+      preserveState: true,
+      onFinish: () => {
+        resetFilters.value = false;
+      },
+    }
+  );
+};
 
 const handleSearch = (event: KeyboardEvent) => {
   const target = event.target as HTMLInputElement;
@@ -62,14 +85,23 @@ const handleSearch = (event: KeyboardEvent) => {
   );
 };
 
-const handleDateFilter = () => {
+const handleFilter = () => {
+  if (filters.value.length === 0) {
+    toast.error("Please add at least one filter.");
+    return;
+  }
+
   router.get(
-    route(url.index, {
+    route(url.index),
+    {
       page: query.page ?? 1,
       per_page: query.per_page ?? 10,
-      start_date: range.value.start.toString(),
-      end_date: range.value.end.toString(),
-    })
+      filters: filters.value,
+    },
+    {
+      preserveState: true,
+      preserveScroll: true,
+    }
   );
 };
 
@@ -96,6 +128,13 @@ const handleDelete = () => {
     },
   });
 };
+
+onMounted(() => {
+  if (defaultFilters && defaultFilters.length > 0) {
+    console.log("defaultFilters", defaultFilters);
+    showFilter.value = true;
+  }
+});
 </script>
 
 <template>
@@ -131,34 +170,18 @@ const handleDelete = () => {
         </div>
       </div>
 
-      <!-- <DataTableFacetedFilter
-        v-if="table.getColumn('status')"
-        :column="table.getColumn('status')"
-        title="Status"
-        :options="statuses"
-      />
-      <DataTableFacetedFilter
-        v-if="table.getColumn('priority')"
-        :column="table.getColumn('priority')"
-        title="Priority"
-        :options="priorities"
-      /> -->
-
-      <DateRangePicker
-        v-if="filterDate"
-        v-model="range"
-        @popover:close="handleDateFilter"
-      />
-
       <Button
-        v-if="isFiltered"
-        variant="ghost"
-        class="h-8 px-2 lg:px-3"
-        @click="table.resetColumnFilters()"
+        size="sm"
+        variant="outline"
+        class="cursor-pointer"
+        @click="showFilter = !showFilter"
       >
-        Reset
-        <CircleX class="ml-2 h-4 w-4" />
+        <FunnelPlus v-if="!showFilter" class="w-4 h-4" />
+        <FunnelX v-else class="w-4 h-4" />
+        Filter
       </Button>
+
+      <MonthRange v-if="filterMonth" />
     </div>
 
     <div class="flex items-center gap-2">
@@ -172,7 +195,31 @@ const handleDelete = () => {
         <Trash2 />
         Delete
       </Button>
+
       <DataTableViewOptions :table="table" />
     </div>
   </div>
+
+  <Transition
+    enter-active-class="transition duration-300 ease-out"
+    enter-from-class="opacity-0 -translate-y-2"
+    enter-to-class="opacity-100 translate-y-0"
+    leave-active-class="transition duration-300 ease-in-out"
+    leave-from-class="opacity-100 translate-y-0"
+    leave-to-class="opacity-0 -translate-y-2"
+  >
+    <DataTableFilter
+      v-if="showFilter"
+      v-model="filters"
+      :fields="filterSchema"
+      @clear="handleReset"
+      @apply="handleFilter"
+      show-validation-errors
+    />
+  </Transition>
+
+  <pre class="text-emerald-500 bg-card rounded-md p-4">
+Filter Value :
+{{ filters }}</pre
+  >
 </template>

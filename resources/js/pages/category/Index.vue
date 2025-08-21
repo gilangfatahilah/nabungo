@@ -11,6 +11,7 @@ import FormDialog from "./partials/FormDialog.vue";
 interface Props {
   categories: TableResponse<Category>;
   query: PageQuery;
+  errors: { [key: string]: string | string[] | undefined };
 }
 const props = defineProps<Props>();
 
@@ -43,7 +44,7 @@ provide("query", props.query);
     }"
   />
 
-  <AppLayout :breadcrumbs="breadcrumbs">
+  <AppLayout :breadcrumbs="breadcrumbs" :errors="errors">
     <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
       <PageHeader
         title="Category"

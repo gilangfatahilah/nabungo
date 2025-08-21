@@ -15,41 +15,57 @@ const df = new DateFormatter("en-US", {
   dateStyle: "medium",
 });
 
+// === ubah props agar menerima Date biasa ===
 const props = defineProps<{
-  modelValue: DateRange;
+  modelValue: { start: Date | null; end: Date | null };
 }>();
 
 const emit = defineEmits<{
-  "update:modelValue": [value: DateRange];
+  "update:modelValue": [value: { start: Date | null; end: Date | null }];
   "popover:close": [value: boolean];
 }>();
 
+// internalValue tetap pakai CalendarDate (dari reka-ui)
 const internalValue = ref<DateRange>({
-  start: props.modelValue.start,
-  end: props.modelValue.end,
+  start: props.modelValue.start
+    ? props.modelValue.start && props.modelValue.start.toCalendarDate?.()
+    : null,
+  end: props.modelValue.end
+    ? props.modelValue.end && props.modelValue.end.toCalendarDate?.()
+    : null,
 });
 
 const handleOpenChange = (val: boolean) => {
   if (!val) emit("popover:close", true);
 };
 
+// convert CalendarDate -> Date sebelum emit keluar
 watch(internalValue, (newValue) => {
+  const start = newValue.start ? newValue.start.toDate(getLocalTimeZone()) : null;
+  const end = newValue.end ? newValue.end.toDate(getLocalTimeZone()) : null;
+
   if (
-    newValue.start?.toString() !== props.modelValue.start?.toString() ||
-    newValue.end?.toString() !== props.modelValue.end?.toString()
+    start?.toString() !== props.modelValue.start?.toString() ||
+    end?.toString() !== props.modelValue.end?.toString()
   ) {
-    emit("update:modelValue", newValue);
+    emit("update:modelValue", { start, end });
   }
 });
 
+// kalau props berubah (Date biasa), sync ke internalValue (CalendarDate)
 watch(
   () => props.modelValue,
   (newVal) => {
     if (
-      newVal.start?.toString() !== internalValue.value.start?.toString() ||
-      newVal.end?.toString() !== internalValue.value.end?.toString()
+      newVal.start?.toString() !==
+        internalValue.value.start?.toDate(getLocalTimeZone())?.toString() ||
+      newVal.end?.toString() !==
+        internalValue.value.end?.toDate(getLocalTimeZone())?.toString()
     ) {
-      internalValue.value = { ...newVal };
+      internalValue.value = {
+        start: newVal.start ? newVal.start.toCalendarDate?.() : null,
+        end: newVal.end ? newVal.end.toCalendarDate?.() : null,
+      };
     }
   }
 );
@@ -62,7 +78,7 @@ watch(
         variant="outline"
         :class="
           cn(
-            'w-[280px] justify-start text-left font-normal h-8',
+            'w-full justify-start text-left font-normal h-8',
             !internalValue.start && 'text-muted-foreground'
           )
         "

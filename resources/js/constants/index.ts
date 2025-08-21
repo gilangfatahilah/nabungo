@@ -13,14 +13,19 @@ const mainNavItems: NavItem[] = [
     icon: ArrowLeftRight,
   },
   {
-    title: 'Budget',
-    href: '/budget',
-    icon: ClipboardList,
+    title: 'Account',
+    href: '/account',
+    icon: WalletMinimal,
   },
   {
     title: 'Category',
     href: '/category',
     icon: Blocks,
+  },
+  {
+    title: 'Budget',
+    href: '/budget',
+    icon: ClipboardList,
   },
   {
     title: 'Goal',
@@ -31,11 +36,6 @@ const mainNavItems: NavItem[] = [
     title: 'Debt',
     href: '/debt',
     icon: SquarePercent,
-  },
-  {
-    title: 'Account',
-    href: '/account',
-    icon: WalletMinimal,
   },
   {
     title: 'History',

@@ -12,7 +12,8 @@ const props = withDefaults(
   defineProps<ProgressRootProps & { class?: HTMLAttributes['class'], bgColor?: string }>(),
   {
     modelValue: 0,
-    bgColor: 'bg-primary'
+    bgColor: 'bg-primary',
+    max: 100
   },
 )
 
@@ -23,8 +24,12 @@ const delegatedProps = reactiveOmit(props, 'class')
   <ProgressRoot
     data-slot="progress"
     v-bind="delegatedProps"
+    :max="max"
     :class="
-      cn('relative h-2 w-full overflow-hidden rounded-full', `${props.class} ${bgColor}/20`)
+      cn(
+        'relative h-2 w-full overflow-hidden rounded-full',
+        `${props.class} bg-secondary`
+      )
     "
   >
     <ProgressIndicator

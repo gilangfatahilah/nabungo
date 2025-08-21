@@ -61,6 +61,29 @@ z-0
       </div>
     </div>
 
-    <div class="aspect-video max-w-6xl relative w-full"></div>
+    <div class="aspect-video max-w-6xl relative w-full">
+      <div class="contents">
+        <div
+          class="rounded-[16px] flex-none h-full left-0 overflow-hidden absolute top-0 w-full"
+        >
+          <div class="absolute rounded-inherit top-0 right-0 bottom-0 left-0">
+            <img
+              class="block w-full h-full rounded-inherit object-center object-cover opacity-90"
+              src="/images/dashboard-dark.png"
+            />
+          </div>
+          <div></div>
+          <div></div>
+        </div>
+      </div>
+      <div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+    </div>
   </section>
 </template>

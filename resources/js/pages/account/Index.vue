@@ -7,10 +7,17 @@ import { Account, BreadcrumbItem, PageQuery, TableResponse } from "@/types";
 import { columns } from "./partials/column";
 import { computed, provide, shallowRef } from "vue";
 import FormDialog from "./partials/FormDialog.vue";
+import {
+  FieldOption,
+  FilterRow,
+} from "@/components/common/data-table/DataTableFilter.vue";
 
 interface Props {
   accounts: TableResponse<Account>;
   query: PageQuery;
+  filters: FilterRow[];
+  filterSchema: FieldOption[];
+  errors: { [key: string]: string | string[] | undefined };
 }
 const props = defineProps<Props>();
 
@@ -30,6 +37,8 @@ const pagination = computed(() => {
 
 provide("pagination", pagination);
 provide("filter-date", false);
+provide("filter-schema", props.filterSchema);
+provide("filters", props.filters);
 provide("url", { index: "account.index", destroy: "account.multiple-destroy" });
 provide("query", props.query);
 </script>
@@ -43,7 +52,7 @@ provide("query", props.query);
     }"
   />
 
-  <AppLayout :breadcrumbs="breadcrumbs">
+  <AppLayout :breadcrumbs="breadcrumbs" :errors="errors">
     <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
       <PageHeader
         title="Account"

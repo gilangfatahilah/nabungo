@@ -1,83 +1,81 @@
 <script setup lang="ts">
-import { Check, ChevronsUpDown, Search } from "lucide-vue-next";
-import { cn } from "@/lib/utils";
+import { Check, ChevronsUpDown } from "lucide-vue-next";
+
+import { computed, isVNode, VNode } from "vue";
 import { Button } from "@/components/ui/button";
 import {
-  Combobox,
-  ComboboxAnchor,
-  ComboboxEmpty,
-  ComboboxGroup,
-  ComboboxInput,
-  ComboboxItem,
-  ComboboxItemIndicator,
-  ComboboxList,
-  ComboboxTrigger,
-} from "@/components/ui/combobox";
-import { VNode, isVNode, computed } from "vue";
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 
 type Option = {
   label: string | VNode;
   value: string | number;
 };
 
-const { options } = defineProps<{
+const { options, loading = false, disabled = false } = defineProps<{
   options: Option[];
+  disabled?: boolean;
+  loading?: boolean;
 }>();
 
+const open = defineModel<boolean>("open");
 const selectedValue = defineModel<string | number | undefined>("value");
+
 const selectedOption = computed(() => {
   return options.find((opt) => opt.value === selectedValue.value);
 });
 </script>
 
 <template>
-  <Combobox v-model="selectedValue" by="label">
-    <ComboboxAnchor as-child>
-      <ComboboxTrigger class="w-full" as-child>
-        <Button variant="outline" class="justify-between">
-          <template v-if="selectedOption?.label">
-            <component v-if="isVNode(selectedOption.label)" :is="selectedOption.label" />
-            <span v-else>{{ selectedOption.label }}</span>
-          </template>
-          <span v-else>Choose an option</span>
+  <Popover v-model:open="open">
+    <PopoverTrigger as-child>
+      <Button
+        variant="outline"
+        role="combobox"
+        :aria-expanded="open"
+        :disabled="loading || disabled"
+        class="w-full justify-between"
+      >
+        <template v-if="selectedOption?.label">
+          <component v-if="isVNode(selectedOption.label)" :is="selectedOption.label" />
+          <span v-else>{{ selectedOption.label }}</span>
+        </template>
+        <span v-else>Choose an option</span>
 
-          <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
-        </Button>
-      </ComboboxTrigger>
-    </ComboboxAnchor>
-
-    <ComboboxList class="w-full">
-      <div class="relative w-full items-center">
-        <ComboboxInput
-          class="pl-9 focus-visible:ring-0 border-0 border-b rounded-none h-10"
-          placeholder="Choose an option..."
-        />
-        <span class="absolute start-0 inset-y-0 flex items-center justify-center px-3">
-          <Search class="size-4 text-muted-foreground" />
-        </span>
-      </div>
-
-      <ComboboxEmpty> No option found. </ComboboxEmpty>
-
-      <ComboboxGroup>
-        <ComboboxItem
-          v-for="option in options"
-          :id="option.value"
-          :key="option.value"
-          :value="option.value"
-          class="cursor-pointer pointer-events-auto"
-          @select="() => (selectedValue = option.value)"
-        >
-          <template v-if="isVNode(option.label)">
-            <component :is="option.label" />
-          </template>
-          <span v-else>{{ option.label }}</span>
-
-          <ComboboxItemIndicator>
-            <Check :class="cn('ml-auto h-4 w-4')" />
-          </ComboboxItemIndicator>
-        </ComboboxItem>
-      </ComboboxGroup>
-    </ComboboxList>
-  </Combobox>
+        <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
+      </Button>
+    </PopoverTrigger>
+    <PopoverContent class="w-full p-0">
+      <Command v-model="selectedValue">
+        <CommandInput placeholder="Search framework..." />
+        <CommandEmpty>No option found.</CommandEmpty>
+        <CommandList>
+          <CommandGroup>
+            <CommandItem
+              v-for="option in options"
+              :key="option.value"
+              :value="option.value"
+              class="py-2"
+              @select="open = false"
+            >
+              <Check
+                :class="
+                  cn('mr-2 h-4 w-4', value === option.value ? 'opacity-100' : 'opacity-0')
+                "
+              />
+              <component v-if="isVNode(option.label)" :is="option.label" />
+              <span v-else>{{ option.label }}</span>
+            </CommandItem>
+          </CommandGroup>
+        </CommandList>
+      </Command>
+    </PopoverContent>
+  </Popover>
 </template>

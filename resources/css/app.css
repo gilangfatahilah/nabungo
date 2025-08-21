@@ -232,4 +232,8 @@
       transform-origin: 50% 50% 0px;
       opacity: 1;
     }
+
+    .rounded-inherit {
+      border-radius: 'inherit'
+    }
 }

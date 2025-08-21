@@ -55,7 +55,7 @@ return new class extends Migration {
       $table->id();
       $table->foreignId('user_id')->constrained()->cascadeOnDelete();
       $table->foreignId('category_id')->constrained()->cascadeOnDelete();
-      $table->string('month', 7); // YYYY-MM
+      $table->timestamp('month');
       $table->decimal('amount', 20, 2);
       $table->timestamps();
     });
@@ -96,7 +96,7 @@ return new class extends Migration {
       $table->text('notes')->nullable();
       $table->enum('status', ['ongoing', 'achieved', 'cancelled'])->default('ongoing');
       $table->timestamps();
-  });
+    });
   }
 
   public function down(): void

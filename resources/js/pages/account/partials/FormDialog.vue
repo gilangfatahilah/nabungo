@@ -2,8 +2,8 @@
 import { Account } from "@/types";
 import { useForm } from "@inertiajs/vue3";
 import { toast } from "vue-sonner";
-import { LoaderCircle } from "lucide-vue-next";
-import { watch } from "vue";
+import { CreditCard, Landmark, LoaderCircle, Wallet } from "lucide-vue-next";
+import { h, watch } from "vue";
 
 import InputError from "@/components/InputError.vue";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import Combobox from "@/components/ComboBox.vue";
 import FormContainerLayout from "@/components/common/dialog/FormContainerLayout.vue";
+import IconLabel from "@/components/IconLabel.vue";
 
 interface Props {
   header: {
@@ -27,11 +28,11 @@ const open = defineModel<boolean>("open");
 
 const { defaultValues } = props;
 const options = [
-  { label: "Cash", value: "cash" },
-  { label: "Bank", value: "bank" },
-  { label: "E-Wallet", value: "ewallet" },
-  { label: "Asset", value: "asset" },
-  { label: "Liability", value: "liability" },
+  { label: h(IconLabel, { icon: Wallet, text: "Cash" }), value: "cash" },
+  { label: h(IconLabel, { icon: Landmark, text: "Bank" }), value: "bank" },
+  { label: h(IconLabel, { icon: CreditCard, text: "E-Wallet" }), value: "ewallet" },
+  { label: h(IconLabel, { icon: Wallet, text: "Asset" }), value: "asset" },
+  { label: h(IconLabel, { icon: Wallet, text: "Liability" }), value: "liability" },
 ];
 
 const form = useForm({

@@ -9,6 +9,12 @@ import MainBalanceCard from './partials/MainBalanceCard.vue';
 import MonthlyBudgetCard from './partials/MonthlyBudgetCard.vue';
 import { type BreadcrumbItem } from '@/types';
 
+interface Props {
+  errors: { [key: string]: string | string[] | undefined };
+}
+
+defineProps<Props>();
+
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Dashboard',
@@ -20,7 +26,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 <template>
   <Head title="Dashboard" />
 
-  <AppLayout :breadcrumbs="breadcrumbs">
+  <AppLayout :breadcrumbs="breadcrumbs" :errors="errors">
     <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4 overflow-x-auto">
       <div class="grid md:grid-rows-2 gap-4 md:grid-cols-4">
         <div
