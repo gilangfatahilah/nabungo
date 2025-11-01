@@ -96,7 +96,7 @@ export const columns: ColumnDef<Transaction>[] = [
       return h(
         'span',
         { class: 'max-w-[500px] truncate font-medium' },
-        formatIdr(row.getValue('amount'), true),
+        formatIdr(Number(row.getValue('amount')), true),
       );
     },
   },

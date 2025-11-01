@@ -46,7 +46,7 @@ const formatDate = (date: string) => {
 
         <div class="space-y-1">
           <p class="text-center text-xl font-semibold">
-            {{ formatIdr(data.amount, true) }}
+            {{ formatIdr(Number(data.amount), true) }}
           </p>
         </div>
 

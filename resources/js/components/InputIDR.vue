@@ -30,7 +30,7 @@ function parseRupiah(value: string): number | null {
 watch(
   () => props.modelValue,
   (val) => {
-    formatted.value = formatRupiah(val ?? null);
+    formatted.value = formatRupiah(Number(val) ?? null);
   },
   { immediate: true }
 );

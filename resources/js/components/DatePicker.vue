@@ -5,7 +5,6 @@ import {
   getLocalTimeZone,
   fromDate,
   toCalendarDate,
-  CalendarDate,
 } from '@internationalized/date'
 import { CalendarIcon } from 'lucide-vue-next'
 import { ref, watch, computed } from 'vue'
@@ -42,7 +41,7 @@ const dateFromDateValue = (dateValue: DateValue | undefined): Date | undefined =
   const day = dateValue.day
 
   // Menggunakan UTC constructor untuk menghindari timezone offset
-  return new Date(Date.UTC(year, month, day, 0, 0, 0, 0)) 
+  return new Date(Date.UTC(year, month, day, 0, 0, 0, 0))
 }
 
 // Internal state menggunakan DateValue untuk Calendar component

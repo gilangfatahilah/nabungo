@@ -5,8 +5,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Separator } from "@/components/ui/separator";
 import { formatIdr } from "@/lib/utils";
 import { Account } from "@/types";
-import { BanknoteArrowDown, BanknoteArrowUp, LoaderCircle } from "lucide-vue-next";
+import { BanknoteArrowDown, BanknoteArrowUp } from "lucide-vue-next";
 import { getTypeLabel, getIconType } from "./column";
+import { Button } from "@/components/ui/button";
+import { router } from "@inertiajs/vue3";
 
 interface Props {
   data: Account;
@@ -44,6 +46,17 @@ watch(open, async (newVal) => {
     }
   }
 });
+
+const toHistory = () => {
+  summaryLoading.value = false;
+  open.value = false;
+
+  router.get(route("history.index"), {
+    page: 1,
+    per_page: 10,
+    filters: [{ field: "account_id", operator: "=", value: data.id }],
+  });
+};
 </script>
 
 <template>
@@ -56,7 +69,7 @@ watch(open, async (newVal) => {
       </DialogHeader>
 
       <h1 class="font-lato font-bold text-2xl tracking-wide mb-2">
-        {{ formatIdr(data.balance, true) }}
+        {{ formatIdr(Number(data.balance), true) }}
       </h1>
 
       <Separator />
@@ -71,7 +84,11 @@ watch(open, async (newVal) => {
           </p>
 
           <p class="font-lato font-semibold tracking-wide">
-            {{ summaryLoading ? "Loading..." : formatIdr(summary?.income ?? 0, true) }}
+            {{
+              summaryLoading
+                ? "Loading..."
+                : formatIdr(Number(summary?.income) ?? 0, true)
+            }}
           </p>
         </div>
         <div class="flex flex-col gap-2">
@@ -81,14 +98,16 @@ watch(open, async (newVal) => {
           </p>
 
           <p class="font-lato font-semibold tracking-wide">
-            {{ summaryLoading ? "Loading..." : formatIdr(summary?.expense ?? 0, true) }}
+            {{
+              summaryLoading
+                ? "Loading..."
+                : formatIdr(Number(summary?.expense) ?? 0, true)
+            }}
           </p>
         </div>
       </div>
 
       <Separator />
-
-      <h1 class="my-2 font-semibold">Account Details</h1>
 
       <div class="flex flex-col gap-4">
         <div class="space-y-1">
@@ -105,10 +124,30 @@ watch(open, async (newVal) => {
         </div>
 
         <div class="space-y-1">
+          <p class="text-muted-foreground text-sm">Opening Balance</p>
+          <p>
+            {{
+              summaryLoading
+                ? "Loading..."
+                : formatIdr(
+                    Number(data.balance) -
+                      (Number(summary?.income) ?? 0) +
+                      (Number(summary?.expense) ?? 0),
+                    true
+                  )
+            }}
+          </p>
+        </div>
+
+        <div class="space-y-1">
           <p class="text-muted-foreground text-sm">Note</p>
           <p>{{ data.notes ?? "-" }}</p>
         </div>
       </div>
+
+      <Separator class="my-2" />
+
+      <Button variant="outline" size="sm" @click="toHistory">History</Button>
     </DialogContent>
   </Dialog>
 </template>

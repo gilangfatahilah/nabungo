@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\FilterParser;
+use App\Helpers\QueryFilters;
 use App\Http\Requests\Budget\StoreRequest;
 use App\Http\Requests\Budget\UpdateRequest;
 use App\Models\Account;
@@ -29,8 +31,16 @@ class BudgetController extends Controller
    */
   public function index(Request $request)
   {
+    $schema = FilterParser::getFilterSchema(Budget::class);
+
+    $filters = FilterParser::parseFilters($request->get('filters', []), $schema);
+
     $query = Budget::query()
       ->with('category')->where('user_id', Auth::id());
+
+    if (!empty($filters)) {
+      $query = QueryFilters::apply($query, $filters, $schema);
+    }
 
     if ($request->filled('search')) {
       $query->whereHas('category', function ($q) use ($request) {
@@ -49,9 +59,13 @@ class BudgetController extends Controller
       ->paginate($request->get('per_page', 10))
       ->withQueryString();
 
+    $filterSchema = FilterParser::prepareSchemaForFrontend($schema);
+
     return Inertia::render('budget/Index', [
       'budgets' => $budgets,
-      'query' => $request->query()
+      'query' => $request->query(),
+      'filters' => $filters,
+      'filterSchema' => $filterSchema,
     ]);
   }
 
@@ -136,5 +150,5 @@ class BudgetController extends Controller
       'month' => $month->format('Y-m'),
       'category_id' => $request->get('category_id'),
     ]);
-    }
+  }
 }

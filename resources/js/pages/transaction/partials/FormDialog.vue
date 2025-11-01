@@ -3,7 +3,7 @@ import { Budget, Transaction } from "@/types";
 import { watch, ref, Ref, reactive } from "vue";
 import { useForm } from "@inertiajs/vue3";
 import { toast } from "vue-sonner";
-import { CheckCircle, LoaderCircle, XCircle, Check } from "lucide-vue-next";
+import { CheckCircle, LoaderCircle, XCircle } from "lucide-vue-next";
 
 import InputError from "@/components/InputError.vue";
 import { Button } from "@/components/ui/button";
@@ -69,6 +69,8 @@ const fetchOptions = async (
   targetRef: Ref<any>,
   loadingKey: keyof typeof loading
 ) => {
+  console.log(`Hi, im fetching... ${routeName}`);
+
   loading[loadingKey] = true;
   try {
     const response = await fetch(routeName);
@@ -113,9 +115,33 @@ const handleSubmit = () => {
   }
 };
 
-watch(open, (newValues) => {
-  if (newValues) {
-    if (!defaultValues) {
+watch(open, (newValue) => {
+  if (newValue) {
+    if (props.defaultValues) {
+      fetchOptions(route("account.options"), accountOptions, "account");
+
+      fetchOptions(
+        route("category.options", { type: props.defaultValues.type }),
+        categoryOptions,
+        "category"
+      );
+
+      if (props.defaultValues.type === "transfer") {
+        fetchOptions(route("account.options"), accountTargetOptions, "accountTarget");
+      }
+
+      const values = {
+        category_id: props.defaultValues.category_id,
+        account_id: props.defaultValues.account_id,
+        account_target_id: props.defaultValues.account_target_id,
+        type: props.defaultValues.type,
+        amount: props.defaultValues.amount,
+        description: props.defaultValues.description,
+        transaction_date: new Date(props.defaultValues.transaction_date),
+      };
+
+      form.defaults(values);
+    } else {
       fetchOptions(
         route("account.options", { types: ["cash", "bank", "ewallet"] }),
         accountOptions,
@@ -132,10 +158,12 @@ watch(open, (newValues) => {
 
 watch(
   () => form.type,
-  (newValues) => {
-    if (newValues !== "transfer") {
+  (newValue) => {
+    if (!open.value) return;
+
+    if (newValue !== "transfer") {
       fetchOptions(
-        route("category.options", { type: newValues }),
+        route("category.options", { type: newValue }),
         categoryOptions,
         "category"
       );
@@ -147,52 +175,19 @@ watch(
 
 watch(
   () => form.category_id,
-  (newValues) => {
-    if (newValues && form.type === "expense") {
+  (newValue) => {
+    if (!open.value) return;
+
+    if (newValue && form.type === "expense") {
       budget.value = undefined;
       const currentMonth = new Date(form.transaction_date).toISOString().slice(0, 7);
       fetchOptions(
-        route("budget.by-category", { category_id: newValues, month: currentMonth }),
+        route("budget.by-category", { category_id: newValue, month: currentMonth }),
         budget,
         "budget"
       );
     }
   }
-);
-
-watch(
-  () => props.defaultValues,
-  (newValues) => {
-    if (newValues) {
-      fetchOptions(route("account.options"), accountOptions, "account");
-
-      fetchOptions(
-        route("category.options", { type: newValues.type }),
-        categoryOptions,
-        "category"
-      );
-
-      // Get account option when transaction type is "transfer"
-      if (newValues.type === "transfer") {
-        fetchOptions(route("account.options"), accountTargetOptions, "accountTarget");
-      }
-
-      const values = {
-        category_id: newValues.category_id,
-        account_id: newValues.account_id,
-        account_target_id: newValues.account_target_id,
-        type: newValues.type,
-        amount: newValues.amount,
-        description: newValues.description,
-        transaction_date: new Date(newValues.transaction_date),
-      };
-
-      form.defaults(values);
-    } else {
-      form.reset();
-    }
-  },
-  { immediate: true }
 );
 </script>
 
@@ -266,11 +261,11 @@ watch(
               {{
                 budget[0].amount >= form.amount
                   ? `In Budget. Remaining : ${formatIdr(
-                      budget[0].amount - form.amount,
+                      Number(budget[0].amount) - Number(form.amount),
                       true
                     )}`
                   : `Budget Exceeded. Remaining : ${formatIdr(
-                      budget[0].amount - form.amount,
+                      Number(budget[0].amount) - Number(form.amount),
                       true
                     )}`
               }}

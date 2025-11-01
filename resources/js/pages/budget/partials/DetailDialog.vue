@@ -14,8 +14,6 @@ interface Props {
 
 const { data } = defineProps<Props>();
 const open = defineModel<boolean>("open");
-
-const percentage = 72;
 </script>
 
 <template>
@@ -32,14 +30,17 @@ const percentage = 72;
               :class="
                 cn(
                   'md:text-3xl font-bold text-primary',
-                  172 <= 100 ? 'text-primary' : 'text-destructive'
+                  data.usage < 100 ? 'text-primary' : 'text-destructive'
                 )
               "
-              >{{ percentage }}%</span
+              >{{ data.usage }}%</span
             >
             of budget used
           </p>
-          <Progress v-model="percentage" :max="data.amount" />
+          <Progress
+            :model-value="data.usage"
+            :bg-color="data.usage < 100 ? 'bg-primary' : 'bg-[#f43f5e]'"
+          />
         </div>
 
         <Separator />
@@ -53,22 +54,22 @@ const percentage = 72;
           <p class="text-muted-foreground text-sm">Status</p>
           <Badge
             class="capitalize flex items-center gap-1"
-            :variant="percentage <= 100 ? 'a-success' : 'a-error'"
+            :variant="data.usage <= 100 ? 'a-success' : 'a-error'"
           >
-            <component :is="percentage <= 100 ? CircleCheck : CircleAlert"></component>
+            <component :is="data.usage <= 100 ? CircleCheck : CircleAlert"></component>
 
-            {{ percentage <= 100 ? "In Budget" : "Budget Exceeded" }}
+            {{ data.usage < 100 ? "In Budget" : "Budget Exceeded" }}
           </Badge>
         </div>
 
         <div class="space-y-1">
           <p class="text-muted-foreground text-sm">Expense this month</p>
-          {{ formatIdr(99000, true) }}
+          {{ formatIdr(Number(data.total_expense) ?? 0, true) }}
         </div>
 
         <div class="space-y-1">
           <p class="text-muted-foreground text-sm">Monthly Budget</p>
-          {{ formatIdr(data.amount, true) }}
+          {{ formatIdr(Number(data.amount), true) }}
         </div>
       </div>
     </DialogContent>

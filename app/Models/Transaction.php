@@ -3,9 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Transaction extends Model
 {
+  use LogsActivity;
+
   protected $fillable = [
     'user_id',
     'category_id',
@@ -78,6 +82,16 @@ class Transaction extends Model
         })->toArray(),
       ],
     ];
+  }
+
+  public function getActivitylogOptions(): LogOptions
+  {
+    return LogOptions::defaults()
+      ->useLogName('system')
+      ->logOnly(['category.name', 'account.name', 'accountTarget.name', 'type', 'amount', 'description', 'transaction_date'])
+      ->setDescriptionForEvent(fn(string $eventName) => "Transaction has been {$eventName}")
+      ->logOnlyDirty()
+      ->dontSubmitEmptyLogs();
   }
 
   public function user()

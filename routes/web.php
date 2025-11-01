@@ -1,8 +1,11 @@
 <?php
 
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\AccountHistoryController;
+use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\BudgetController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\GoalController;
 use App\Http\Controllers\TransactionController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -23,6 +26,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
   Route::delete('account/multiple', [AccountController::class, 'multipleDestroy'])->name('account.multiple-destroy');
   Route::resource('account', AccountController::class);
 
+  // Account History
+  Route::resource('history', AccountHistoryController::class)
+    ->only(['index']);
+
   // Category
   Route::get('category/options', [CategoryController::class, 'options'])->name('category.options');
   Route::delete('category/multiple', [CategoryController::class, 'multipleDestroy'])->name('category.multiple-destroy');
@@ -36,6 +43,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
   // Transaction
   Route::delete('transaction/multiple', [TransactionController::class, 'multipleDestroy'])->name('transaction.multiple-destroy');
   Route::resource('transaction', TransactionController::class);
+
+  // Goal
+  Route::resource('goal', GoalController::class);
+
+  // Activity Log
+  Route::get('activity-log', [ActivityLogController::class, 'index'])->name('activity-log.index');
 });
 
 require __DIR__ . '/settings.php';

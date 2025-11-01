@@ -1,5 +1,6 @@
 import type { LucideIcon } from 'lucide-vue-next';
 import type { Config } from 'ziggy-js';
+import { Account } from '@/types';
 
 export interface Auth {
   user: User;
@@ -82,11 +83,27 @@ interface Account {
   id: number;
   user_id: number;
   name: string;
-  type: 'cash' | 'bank' | 'ewallet' | 'asset' | 'liability';
+  type: 'cash' | 'bank' | 'ewallet' | 'asset' | 'liability' | 'goal';
   balance: number;
   notes?: string;
   created_at: string;
   updated_at: string;
+}
+
+interface AccountHistory {
+  id: number;
+  user_id: number;
+  account_id: number;
+  transaction_id: number;
+  type: 'in' | 'out';
+  amount: number;
+  balance_before: number;
+  balance_after: number;
+  notes?: string;
+  created_at: string;
+  updated_at: string;
+  transaction: Transaction;
+  account: Account;
 }
 
 interface Category {
@@ -105,6 +122,8 @@ interface Budget {
   category: Category;
   month: string;
   amount: number;
+  usage: number;
+  total_expense: number;
   created_at: string;
   updated_at: string;
 }
@@ -127,6 +146,40 @@ interface Transaction {
   account_target?: Account;
 }
 
-export { TableResponse, PageQuery, User, Account, Category, Budget, Transaction }
+interface Goal {
+  id: number;
+  user_id: number;
+  account_id: number;
+  title: string;
+  target_amount: number;
+  saved_amount: number;
+  due_date?: string;
+  notes?: string;
+  status: 'ongoing' | 'achieved' | 'cancelled';
+  deadline: string
+  user: User
+  account: Account
+}
+
+export interface ActivityLog {
+  id: number;
+  log_name: string;
+  description: string | null;
+  subject_id: number | null;
+  subject_type: string | null;
+  causer_id: number | null;
+  causer_type: string | null;
+  event: 'created' | 'updated' | 'deleted';
+  properties: {
+    old?: Record<string, any>;
+    attributes?: Record<string, any>;
+  };
+  batch_uuid?: string | null;
+  created_at: string;
+  updated_at: string;
+  causer: User;
+}
+
+export { TableResponse, PageQuery, User, Account, AccountHistory, Category, Budget, Transaction, Goal }
 
 export type BreadcrumbItemType = BreadcrumbItem;

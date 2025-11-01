@@ -128,7 +128,7 @@ watch(
               class="w-full"
               placeholder="Account Note"
             />
-            <InputError :message="form.errors.name" />
+            <InputError :message="form.errors.notes" />
           </div>
 
           <Button

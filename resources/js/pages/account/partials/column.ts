@@ -7,7 +7,7 @@ import DataTableColumnHeader from '@/components/common/data-table/DataTableColum
 import { formatIdr } from '@/lib/utils';
 import RowActions from './RowActions.vue';
 import { Badge, BadgeVariants } from '@/components/ui/badge';
-import { CreditCard, Landmark, Wallet } from 'lucide-vue-next';
+import { CreditCard, HandCoins, Landmark, Wallet } from 'lucide-vue-next';
 
 export const getTypeLabel = (type: Account['type']): BadgeVariants['variant'] => {
   let variant: BadgeVariants['variant'];
@@ -16,14 +16,14 @@ export const getTypeLabel = (type: Account['type']): BadgeVariants['variant'] =>
     case 'bank':
       variant = 'a-warning'
       break;
-    case 'ewallet':
-      variant = 'a-info'
+    case 'cash':
+      variant = 'a-success'
       break;
     case 'liability':
       variant = 'a-error'
       break;
     default:
-      variant = 'a-success'
+      variant = 'a-info'
   }
 
   return variant;
@@ -37,6 +37,8 @@ export const getIconType = (type: Account['type']) => {
       return Landmark;
     case 'ewallet':
       return CreditCard;
+    case 'goal':
+      return HandCoins;
     default:
       return Wallet;
   }
@@ -96,7 +98,7 @@ export const columns: ColumnDef<Account>[] = [
     header: 'Balance',
 
     cell: ({ row }) => {
-      return h('span', { class: 'max-w-[500px] truncate font-medium' }, formatIdr(row.getValue('balance') ?? 0, true));
+      return h('span', { class: 'max-w-[500px] truncate font-medium' }, formatIdr(Number(row.getValue('balance')) ?? 0, true));
     },
   },
   {

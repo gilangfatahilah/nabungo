@@ -47,7 +47,7 @@ class AccountController extends Controller
       ->paginate($request->get('per_page', 10))
       ->withQueryString();
 
-    $filterSchema = FilterParser::prepareFilterSchemaForFrontend($schema);
+    $filterSchema = FilterParser::prepareSchemaForFrontend($schema);
 
     return Inertia::render('account/Index', [
       'accounts' => $accounts,

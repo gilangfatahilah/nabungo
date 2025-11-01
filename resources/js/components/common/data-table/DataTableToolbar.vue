@@ -10,7 +10,7 @@ import DataTableViewOptions from "./DataTableViewOptions.vue";
 import ConfirmationDialog from "../dialog/ConfirmationDialog.vue";
 import { toast } from "vue-sonner";
 import MonthRange from "../popover/MonthRange.vue";
-import DataTableFilter, { FieldOption, FilterRow } from "./DataTableFilter2.vue";
+import DataTableFilter, { FieldOption, FilterRow } from "./DataTableFilter.vue";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
@@ -34,7 +34,6 @@ const props = defineProps<DataTableToolbarProps<any>>();
 const url = inject("url") as { index: string; destroy: string };
 const query = inject("query") as QueryParams;
 const filterSchema = inject("filter-schema") as FieldOption[];
-const filterMonth = inject("filter-month") ?? false;
 const defaultFilters = inject("filters") as FilterRow[] | undefined;
 
 /**
@@ -91,12 +90,17 @@ const handleFilter = () => {
     return;
   }
 
+  const mappedFilters = filters.value.map((filter) => {
+    const { id, ...rest } = filter;
+    return rest;
+  });
+
   router.get(
     route(url.index),
     {
       page: query.page ?? 1,
       per_page: query.per_page ?? 10,
-      filters: filters.value,
+      filters: mappedFilters,
     },
     {
       preserveState: true,
@@ -181,7 +185,7 @@ onMounted(() => {
         Filter
       </Button>
 
-      <MonthRange v-if="filterMonth" />
+      <!-- <MonthRange v-if="filterMonth" /> -->
     </div>
 
     <div class="flex items-center gap-2">
@@ -218,8 +222,7 @@ onMounted(() => {
     />
   </Transition>
 
-  <pre class="text-emerald-500 bg-card rounded-md p-4">
+  <!-- <pre class="text-emerald-500 bg-card rounded-md p-4">
 Filter Value :
-{{ filters }}</pre
-  >
+{{ filters }}</pre> -->
 </template>

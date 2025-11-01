@@ -88,12 +88,14 @@ const handleDelete = () => {
         Edit
       </DropdownMenuItem>
 
-      <DropdownMenuSeparator />
+      <template v-if="row.type !== 'goal'">
+        <DropdownMenuSeparator />
 
-      <DropdownMenuItem variant="destructive" @click="dialogOpen.delete = true">
-        <Trash2 class="mr-2" />
-        Delete
-      </DropdownMenuItem>
+        <DropdownMenuItem variant="destructive" @click="dialogOpen.delete = true">
+          <Trash2 class="mr-2" />
+          Delete
+        </DropdownMenuItem>
+      </template>
     </DropdownMenuContent>
   </DropdownMenu>
 </template>

@@ -64,22 +64,20 @@ export const columns: ColumnDef<Budget>[] = [
       return h(
         'span',
         { class: 'max-w-[500px] truncate font-medium' },
-        formatIdr(row.getValue('amount'), true),
+        formatIdr(Number(row.getValue('amount')), true),
       );
     },
   },
   {
-    accessorKey: 'expenses',
-    header: 'Expenses',
+    accessorKey: 'usage',
+    header: 'Usage',
 
     cell: ({ row }) => {
-      const progress = Math.floor(Math.random() * 200000) + 1;;
-      const limit = row.getValue('amount') as Budget['amount'];
-      const percentage = Math.round(limit > 0 ? (progress / limit) * 100 : 0);
+      const percentage = row.getValue('usage') as number;
 
       return h(
         Progress,
-        { bgColor: percentage <= 100 ? 'bg-primary' : 'bg-[#f43f5e]', modelValue: percentage, class: 'w-3/4' },
+        { bgColor: percentage < 100 ? 'bg-primary' : 'bg-[#f43f5e]', modelValue: percentage, class: 'w-3/4', tooltip: `${percentage}% used` },
       );
     },
   },

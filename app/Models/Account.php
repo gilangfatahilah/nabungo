@@ -3,9 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Account extends Model
 {
+  use LogsActivity;
+
   protected $fillable = [
     'user_id',
     'name',
@@ -45,6 +49,16 @@ class Account extends Model
     ];
   }
 
+  public function getActivitylogOptions(): LogOptions
+  {
+    return LogOptions::defaults()
+      ->useLogName('system')
+      ->logOnly(['name', 'type', 'balance', 'notes'])
+      ->setDescriptionForEvent(fn(string $eventName) => "{$this->name} has been {$eventName}")
+      ->logOnlyDirty()
+      ->dontSubmitEmptyLogs();
+  }
+
   public function user()
   {
     return $this->belongsTo(User::class);
@@ -53,6 +67,11 @@ class Account extends Model
   public function transactions()
   {
     return $this->hasMany(Transaction::class);
+  }
+
+  public function goal()
+  {
+    return $this->hasOne(Goal::class, 'account_id');
   }
 
   public function histories()

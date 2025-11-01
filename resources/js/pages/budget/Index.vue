@@ -7,10 +7,16 @@ import { BreadcrumbItem, Budget, PageQuery, TableResponse } from "@/types";
 import { columns } from "./partials/column";
 import { computed, provide, shallowRef } from "vue";
 import FormDialog from "./partials/FormDialog.vue";
+import {
+  FieldOption,
+  FilterRow,
+} from "@/components/common/data-table/DataTableFilter.vue";
 
 interface Props {
   budgets: TableResponse<Budget>;
   query: PageQuery;
+  filters: FilterRow[];
+  filterSchema: FieldOption[];
   errors: { [key: string]: string | string[] | undefined };
 }
 const props = defineProps<Props>();
@@ -31,6 +37,9 @@ const pagination = computed(() => {
 
 provide("pagination", pagination);
 provide("filter-month", true);
+provide("filter-date", false);
+provide("filter-schema", props.filterSchema);
+provide("filters", props.filters);
 provide("url", { index: "budget.index", destroy: "budget.multiple-destroy" });
 provide("query", props.query);
 </script>

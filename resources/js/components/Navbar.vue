@@ -37,7 +37,11 @@ const navLinks = [
         <div class="grid grid-cols-2 items-center p-2 px-4 md:pr-2">
           <!-- Logo -->
           <div class="flex items-center gap-8">
-            <img src="/images/logo.svg" alt="Logo Image" class="h-4 md:h-6 w-auto ml-2" />
+            <img
+              src="/images/logo2.svg"
+              alt="Logo Image"
+              class="h-6 md:h-6 w-auto ml-2"
+            />
 
             <nav class="flex gap-6 font-dm-sans text-[#D5D5D5] text-lg">
               <a
