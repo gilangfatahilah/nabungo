@@ -14,8 +14,11 @@
 
   FROM php:8.3-cli AS production
 
-  RUN apt-get update && apt-get install -y sqlite3 libsqlite3-dev \
-      && docker-php-ext-install pdo pdo_sqlite
+  RUN apt-get update && apt-get install -y \
+  git curl zip unzip sqlite3 libsqlite3-dev \
+  && docker-php-ext-install pdo pdo_sqlite
+
+  ENV COMPOSER_ALLOW_SUPERUSER=1
 
   WORKDIR /var/www/html
   COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
