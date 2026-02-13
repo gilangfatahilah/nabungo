@@ -19,7 +19,7 @@ defineProps<Props>();
 
 <template>
   <DialogContent class="sm:max-w-2xl">
-    <ScrollArea class="max-h-[75dvh]">
+    <ScrollArea class="max-h-[80dvh]">
       <DialogHeader class="py-3 px-2">
         <DialogTitle>{{ header.title }}</DialogTitle>
         <DialogDescription v-if="header.description">

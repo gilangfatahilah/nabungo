@@ -1,8 +1,11 @@
 <script setup lang="ts">
-import AppContent from '@/components/AppContent.vue';
-import AppShell from '@/components/AppShell.vue';
 import AppSidebar from '@/components/AppSidebar.vue';
-import AppSidebarHeader from '@/components/AppSidebarHeader.vue';
+import SiteHeader from '@/components/SiteHeader.vue'
+import {
+    SidebarInset,
+    SidebarProvider,
+} from '@/components/ui/sidebar'
+
 import type { BreadcrumbItemType } from '@/types';
 
 interface Props {
@@ -15,11 +18,21 @@ withDefaults(defineProps<Props>(), {
 </script>
 
 <template>
-    <AppShell variant="sidebar">
+    <SidebarProvider :style="{
+        '--sidebar-width': 'calc(var(--spacing) * 72)',
+        '--header-height': 'calc(var(--spacing) * 12)',
+    }">
+        <AppSidebar variant="inset" />
+        <SidebarInset>
+            <SiteHeader :breadcrumbs="breadcrumbs" />
+            <slot />
+        </SidebarInset>
+    </SidebarProvider>
+    <!-- <AppShell variant="sidebar">
         <AppSidebar />
         <AppContent variant="sidebar" class="overflow-x-hidden">
             <AppSidebarHeader :breadcrumbs="breadcrumbs" />
             <slot />
         </AppContent>
-    </AppShell>
+    </AppShell> -->
 </template>

@@ -5,6 +5,7 @@ use App\Http\Controllers\AccountHistoryController;
 use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\BudgetController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GoalController;
 use App\Http\Controllers\TransactionController;
 use Illuminate\Support\Facades\Route;
@@ -14,9 +15,9 @@ Route::get('/', function () {
   return Inertia::render('Welcome');
 })->name('home');
 
-Route::get('dashboard', function () {
-  return Inertia::render('dashboard/Index');
-})->middleware(['auth', 'verified'])->name('dashboard');
+// Route::get('dashboard', function () {
+//   return Inertia::render('dashboard/Index');
+// })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware(['auth', 'verified'])->group(function () {
   // Account
@@ -26,6 +27,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
   Route::delete('account/multiple', [AccountController::class, 'multipleDestroy'])->name('account.multiple-destroy');
   Route::resource('account', AccountController::class);
 
+  Route::resource('dashboard', DashboardController::class)->only(['index']);
   // Account History
   Route::resource('history', AccountHistoryController::class)
     ->only(['index']);

@@ -35,6 +35,7 @@ interface Props {
     description?: string;
   };
   defaultValues?: Transaction;
+  initialType?: 'income' | 'expense' | 'transfer';
 }
 
 const props = defineProps<Props>();
@@ -56,7 +57,7 @@ const form = useForm({
   category_id: defaultValues?.category_id,
   account_id: defaultValues?.account_id,
   account_target_id: defaultValues?.account_target_id,
-  type: defaultValues?.type ?? "income",
+  type: defaultValues?.type ?? props.initialType ?? "income",
   amount: defaultValues?.amount,
   description: defaultValues?.description,
   transaction_date: defaultValues?.transaction_date
@@ -142,16 +143,25 @@ watch(open, (newValue) => {
 
       form.defaults(values);
     } else {
+      const initialTransactionType = props.initialType ?? "income";
+
       fetchOptions(
         route("account.options", { types: ["cash", "bank", "ewallet"] }),
         accountOptions,
         "account"
       );
-      fetchOptions(
-        route("category.options", { type: "income" }),
-        categoryOptions,
-        "category"
-      );
+
+      if (initialTransactionType !== "transfer") {
+        fetchOptions(
+          route("category.options", { type: initialTransactionType }),
+          categoryOptions,
+          "category"
+        );
+      } else {
+        fetchOptions(route("account.options"), accountTargetOptions, "accountTarget");
+      }
+
+      form.type = initialTransactionType;
     }
   }
 });
