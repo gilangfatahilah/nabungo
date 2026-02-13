@@ -1,7 +1,6 @@
 #!/bin/bash
 set -e
 
-# Ensure database exists
 if [ ! -f /app/database/database.sqlite ]; then
     echo "Creating database file..."
     mkdir -p /app/database
@@ -9,11 +8,18 @@ if [ ! -f /app/database/database.sqlite ]; then
     chmod 666 /app/database/database.sqlite
 fi
 
-# Run migrations
 php artisan migrate --force
-
-# Run seeders
 php artisan db:seed --force
 
-# Start server
+# Clear semua cache sebelum start
+php artisan config:clear
+php artisan cache:clear
+php artisan route:clear
+php artisan view:clear
+
+# Cache ulang
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+
 php artisan serve --host=0.0.0.0 --port=$PORT
