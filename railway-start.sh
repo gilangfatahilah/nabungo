@@ -9,7 +9,7 @@ if [ ! -f /app/database/database.sqlite ]; then
 fi
 
 php artisan migrate --force
-php artisan db:seed --force
+# php artisan db:seed --force
 
 # Clear semua cache sebelum start
 php artisan config:clear
