@@ -146,33 +146,34 @@ const toggleFaq = (index: number) => {
                 class="aspect-square bg-white rounded-full blur-[90px] flex-none h-[930px] w-[930px] absolute -left-[395px] -top-[490px] opacity-[0.01]">
             </div>
             <div
-                class="aspect-square bg-[#00FFB2] rounded-full blur-[120px] flex-none h-[694px] w-[694px] absolute -left-[347px] -top-[362px] opacity-[0.07]">
+                class="aspect-square bg-primary rounded-full blur-[120px] flex-none h-[694px] w-[694px] absolute -left-[347px] -top-[362px] opacity-[0.07]">
             </div>
             <div
-                class="aspect-square bg-[#00FFB2] rounded-full blur-[120px] flex-none h-[694px] w-[694px] absolute -right-[504px] top-[97px] opacity-[0.05]">
+                class="aspect-square bg-primary rounded-full blur-[120px] flex-none h-[694px] w-[694px] absolute -right-[504px] top-[97px] opacity-[0.05]">
             </div>
         </div>
 
         <Navbar />
 
         <!-- Hero Section -->
-        <section id="hero" class="relative min-h-screen flex flex-col items-center justify-center px-4 py-20">
+        <section id="hero" class="relative min-h-screen flex flex-col items-center justify-center px-4 pb-20">
             <div class="max-w-5xl mx-auto text-center z-10">
                 <!-- Badge -->
                 <div
-                    class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#00FFB2]/10 border border-[#00FFB2]/20 mb-8 animate-fade-in">
+                    class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-8 animate-fade-in">
                     <span class="relative flex h-2 w-2">
                         <span
-                            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00FFB2] opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-2 w-2 bg-[#00FFB2]"></span>
+                            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
                     </span>
-                    <span class="text-sm text-[#00FFB2] font-medium">Your Personal Finance Companion</span>
+                    <span class="text-sm text-primary font-medium">Your Personal Finance Companion</span>
                 </div>
 
                 <!-- Main Heading -->
-                <h1 class="font-dm-sans text-5xl md:text-7xl font-bold tracking-tight leading-tight mb-6">
+                <h1 class="font-dm-sans text-5xl md:text-7xl font-bold tracking-tight max-w-4xl leading-tight mb-6">
                     Take Control of Your
-                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#00FFB2] to-[#00D9FF]">
+                    <span
+                        class="text-transparent bg-clip-text bg-gradient-to-r from-primary via-[oklch(0.70_0.22_128)] to-[oklch(0.75_0.20_125)]">
                         Financial Future
                     </span>
                 </h1>
@@ -186,14 +187,14 @@ const toggleFaq = (index: number) => {
                 <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
                     <Link :href="route('register')">
                         <button
-                            class="group px-8 py-4 rounded-full bg-[#00FFB2] font-bold tracking-wide font-dm-sans text-black cursor-pointer transition-all duration-300 hover:shadow-[0_0_40px_rgba(0,255,178,0.3)] hover:scale-105 flex items-center gap-2">
+                            class="group px-8 py-4 rounded-full bg-primary font-bold tracking-wide font-dm-sans text-black cursor-pointer transition-all duration-300 hover:shadow-[0_0_40px_oklch(0.648_0.2_131.684/0.4)] hover:scale-105 flex items-center gap-2">
                             Start Free Today
                             <ArrowRight :size="20" class="group-hover:translate-x-1 transition-transform" />
                         </button>
                     </Link>
                     <a href="#features">
                         <button
-                            class="px-8 py-4 rounded-full bg-transparent border border-[#333] font-medium font-dm-sans text-white cursor-pointer transition-all duration-300 hover:border-[#00FFB2]/50 hover:bg-[#00FFB2]/5">
+                            class="px-8 py-4 rounded-full bg-transparent border border-[#333] font-medium font-dm-sans text-white cursor-pointer transition-all duration-300 hover:border-primary/50 hover:bg-primary/5">
                             Explore Features
                         </button>
                     </a>
@@ -216,7 +217,7 @@ const toggleFaq = (index: number) => {
                 <div class="relative rounded-2xl overflow-hidden shadow-2xl shadow-black/50">
                     <!-- Glow effect -->
                     <div
-                        class="absolute -inset-1 bg-gradient-to-r from-[#00FFB2]/20 via-transparent to-[#00D9FF]/20 rounded-2xl blur-xl">
+                        class="absolute -inset-1 bg-gradient-to-r from-primary/20 via-transparent to-[oklch(0.70_0.22_128)]/20 rounded-2xl blur-xl">
                     </div>
                     <div class="relative rounded-2xl overflow-hidden border border-white/10">
                         <img src="/images/dashboard.png" alt="Nabungo Dashboard" class="w-full h-auto" />
@@ -231,11 +232,11 @@ const toggleFaq = (index: number) => {
         <section id="features" class="relative py-24 px-4">
             <div class="max-w-6xl mx-auto">
                 <div class="text-center mb-16">
-                    <span
-                        class="text-[#00FFB2] text-sm font-semibold tracking-wider uppercase mb-4 block">Features</span>
+                    <span class="text-primary text-sm font-semibold tracking-wider uppercase mb-4 block">Features</span>
                     <h2 class="font-dm-sans text-4xl md:text-5xl font-bold mb-6">
                         Everything You Need to
-                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#00FFB2] to-[#00D9FF]">Master
+                        <span
+                            class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-[oklch(0.70_0.22_128)]">Master
                             Your Money</span>
                     </h2>
                     <p class="text-[#A1A1AA] text-lg max-w-2xl mx-auto">
@@ -246,10 +247,10 @@ const toggleFaq = (index: number) => {
 
                 <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <div v-for="feature in features" :key="feature.title"
-                        class="group p-8 rounded-2xl bg-gradient-to-b from-[#12111A] to-[#0D0C14] border border-white/5 hover:border-[#00FFB2]/30 transition-all duration-500 hover:shadow-[0_0_40px_rgba(0,255,178,0.1)]">
+                        class="group p-8 rounded-2xl bg-gradient-to-b from-[#12111A] to-[#0D0C14] border border-white/5 hover:border-primary/30 transition-all duration-500 hover:shadow-[0_0_40px_oklch(0.648_0.2_131.684/0.15)]">
                         <div
-                            class="w-14 h-14 rounded-xl bg-[#00FFB2]/10 flex items-center justify-center mb-6 group-hover:bg-[#00FFB2]/20 transition-colors">
-                            <component :is="feature.icon" :size="28" class="text-[#00FFB2]" />
+                            class="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-6 group-hover:bg-primary/20 transition-colors">
+                            <component :is="feature.icon" :size="28" class="text-primary" />
                         </div>
                         <h3 class="font-dm-sans text-xl font-semibold mb-3">{{ feature.title }}</h3>
                         <p class="text-[#71717A] leading-relaxed">{{ feature.description }}</p>
@@ -262,16 +263,17 @@ const toggleFaq = (index: number) => {
         <section class="relative py-24 px-4 overflow-hidden">
             <!-- Background accent -->
             <div
-                class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#00FFB2]/5 rounded-full blur-[120px]">
+                class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[120px]">
             </div>
 
             <div class="max-w-6xl mx-auto relative">
                 <div class="text-center mb-16">
-                    <span class="text-[#00FFB2] text-sm font-semibold tracking-wider uppercase mb-4 block">How It
+                    <span class="text-primary text-sm font-semibold tracking-wider uppercase mb-4 block">How It
                         Works</span>
                     <h2 class="font-dm-sans text-4xl md:text-5xl font-bold mb-6">
                         Get Started in
-                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#00FFB2] to-[#00D9FF]">3
+                        <span
+                            class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-[oklch(0.70_0.22_128)]">3
                             Simple Steps</span>
                     </h2>
                 </div>
@@ -280,12 +282,12 @@ const toggleFaq = (index: number) => {
                     <div v-for="(step, index) in steps" :key="step.number" class="relative text-center">
                         <!-- Connector line -->
                         <div v-if="index < steps.length - 1"
-                            class="hidden md:block absolute top-12 left-[60%] w-[80%] h-[2px] bg-gradient-to-r from-[#00FFB2]/50 to-transparent">
+                            class="hidden md:block absolute top-12 left-[60%] w-[80%] h-[2px] bg-gradient-to-r from-primary/50 to-transparent">
                         </div>
 
                         <div
-                            class="w-24 h-24 rounded-full bg-gradient-to-br from-[#00FFB2]/20 to-[#00FFB2]/5 flex items-center justify-center mx-auto mb-6 border border-[#00FFB2]/30">
-                            <span class="text-3xl font-bold text-[#00FFB2]">{{ step.number }}</span>
+                            class="w-24 h-24 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center mx-auto mb-6 border border-primary/30">
+                            <span class="text-3xl font-bold text-primary">{{ step.number }}</span>
                         </div>
                         <h3 class="font-dm-sans text-xl font-semibold mb-3">{{ step.title }}</h3>
                         <p class="text-[#71717A]">{{ step.description }}</p>
@@ -301,28 +303,28 @@ const toggleFaq = (index: number) => {
                     class="grid grid-cols-2 md:grid-cols-4 gap-8 p-8 md:p-12 rounded-3xl bg-gradient-to-r from-[#12111A] via-[#0F0E16] to-[#12111A] border border-white/5">
                     <div class="text-center">
                         <div
-                            class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#00FFB2] to-[#00D9FF] mb-2">
+                            class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-[oklch(0.70_0.22_128)] mb-2">
                             10K+
                         </div>
                         <p class="text-[#71717A]">Active Users</p>
                     </div>
                     <div class="text-center">
                         <div
-                            class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#00FFB2] to-[#00D9FF] mb-2">
+                            class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-[oklch(0.70_0.22_128)] mb-2">
                             $2M+
                         </div>
                         <p class="text-[#71717A]">Tracked Monthly</p>
                     </div>
                     <div class="text-center">
                         <div
-                            class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#00FFB2] to-[#00D9FF] mb-2">
+                            class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-[oklch(0.70_0.22_128)] mb-2">
                             50K+
                         </div>
                         <p class="text-[#71717A]">Goals Achieved</p>
                     </div>
                     <div class="text-center">
                         <div
-                            class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#00FFB2] to-[#00D9FF] mb-2">
+                            class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-[oklch(0.70_0.22_128)] mb-2">
                             4.9
                         </div>
                         <p class="text-[#71717A]">User Rating</p>
@@ -336,17 +338,17 @@ const toggleFaq = (index: number) => {
             <div class="max-w-6xl mx-auto">
                 <div class="text-center mb-16">
                     <span
-                        class="text-[#00FFB2] text-sm font-semibold tracking-wider uppercase mb-4 block">Testimonials</span>
+                        class="text-primary text-sm font-semibold tracking-wider uppercase mb-4 block">Testimonials</span>
                     <h2 class="font-dm-sans text-4xl md:text-5xl font-bold mb-6">
                         Loved by
                         <span
-                            class="text-transparent bg-clip-text bg-gradient-to-r from-[#00FFB2] to-[#00D9FF]">Thousands</span>
+                            class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-[oklch(0.70_0.22_128)]">Thousands</span>
                     </h2>
                 </div>
 
                 <div class="grid md:grid-cols-3 gap-6">
                     <div v-for="testimonial in testimonials" :key="testimonial.name"
-                        class="p-8 rounded-2xl bg-gradient-to-b from-[#12111A] to-[#0D0C14] border border-white/5 hover:border-[#00FFB2]/20 transition-all duration-300">
+                        class="p-8 rounded-2xl bg-gradient-to-b from-[#12111A] to-[#0D0C14] border border-white/5 hover:border-primary/20 transition-all duration-300">
                         <div class="flex items-center gap-1 mb-6">
                             <Star v-for="i in testimonial.rating" :key="i" :size="16"
                                 class="fill-[#FFD700] text-[#FFD700]" />
@@ -354,7 +356,7 @@ const toggleFaq = (index: number) => {
                         <p class="text-[#D5D5D5] mb-6 leading-relaxed">"{{ testimonial.content }}"</p>
                         <div class="flex items-center gap-4">
                             <div
-                                class="w-12 h-12 rounded-full bg-gradient-to-br from-[#00FFB2] to-[#00D9FF] flex items-center justify-center text-black font-bold">
+                                class="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-[oklch(0.70_0.22_128)] flex items-center justify-center text-black font-bold">
                                 {{ testimonial.avatar }}
                             </div>
                             <div>
@@ -371,11 +373,11 @@ const toggleFaq = (index: number) => {
         <section id="faqs" class="relative py-24 px-4">
             <div class="max-w-3xl mx-auto">
                 <div class="text-center mb-16">
-                    <span class="text-[#00FFB2] text-sm font-semibold tracking-wider uppercase mb-4 block">FAQs</span>
+                    <span class="text-primary text-sm font-semibold tracking-wider uppercase mb-4 block">FAQs</span>
                     <h2 class="font-dm-sans text-4xl md:text-5xl font-bold mb-6">
                         Frequently Asked
                         <span
-                            class="text-transparent bg-clip-text bg-gradient-to-r from-[#00FFB2] to-[#00D9FF]">Questions</span>
+                            class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-[oklch(0.70_0.22_128)]">Questions</span>
                     </h2>
                 </div>
 
@@ -386,7 +388,7 @@ const toggleFaq = (index: number) => {
                         <button @click="toggleFaq(index)"
                             class="w-full px-6 py-5 flex items-center justify-between text-left cursor-pointer">
                             <span class="font-semibold text-lg">{{ faq.question }}</span>
-                            <ChevronRight :size="20" class="text-[#00FFB2] transition-transform duration-300"
+                            <ChevronRight :size="20" class="text-primary transition-transform duration-300"
                                 :class="faq.open ? 'rotate-90' : ''" />
                         </button>
                         <div class="overflow-hidden transition-all duration-300"
@@ -404,14 +406,16 @@ const toggleFaq = (index: number) => {
                 <div
                     class="relative rounded-3xl overflow-hidden p-12 md:p-16 text-center bg-gradient-to-br from-[#12111A] to-[#0D0C14] border border-white/10">
                     <!-- Glow effects -->
-                    <div class="absolute top-0 left-1/4 w-64 h-64 bg-[#00FFB2]/20 rounded-full blur-[100px]"></div>
-                    <div class="absolute bottom-0 right-1/4 w-64 h-64 bg-[#00D9FF]/20 rounded-full blur-[100px]"></div>
+                    <div class="absolute top-0 left-1/4 w-64 h-64 bg-primary/20 rounded-full blur-[100px]"></div>
+                    <div
+                        class="absolute bottom-0 right-1/4 w-64 h-64 bg-[oklch(0.70_0.22_128)]/20 rounded-full blur-[100px]">
+                    </div>
 
                     <div class="relative z-10">
                         <h2 class="font-dm-sans text-4xl md:text-5xl font-bold mb-6">
                             Ready to Transform Your
                             <span
-                                class="text-transparent bg-clip-text bg-gradient-to-r from-[#00FFB2] to-[#00D9FF]">Financial
+                                class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-[oklch(0.70_0.22_128)]">Financial
                                 Life?</span>
                         </h2>
                         <p class="text-[#A1A1AA] text-lg mb-10 max-w-2xl mx-auto">
@@ -421,7 +425,7 @@ const toggleFaq = (index: number) => {
                         <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
                             <Link :href="route('register')">
                                 <button
-                                    class="group px-8 py-4 rounded-full bg-[#00FFB2] font-bold tracking-wide font-dm-sans text-black cursor-pointer transition-all duration-300 hover:shadow-[0_0_40px_rgba(0,255,178,0.3)] hover:scale-105 flex items-center gap-2">
+                                    class="group px-8 py-4 rounded-full bg-primary font-bold tracking-wide font-dm-sans text-black cursor-pointer transition-all duration-300 hover:shadow-[0_0_40px_oklch(0.648_0.2_131.684/0.4)] hover:scale-105 flex items-center gap-2">
                                     Get Started for Free
                                     <ArrowRight :size="20" class="group-hover:translate-x-1 transition-transform" />
                                 </button>
@@ -429,11 +433,11 @@ const toggleFaq = (index: number) => {
                         </div>
                         <div class="flex items-center justify-center gap-6 mt-8 text-sm text-[#71717A]">
                             <span class="flex items-center gap-2">
-                                <Check :size="16" class="text-[#00FFB2]" />
+                                <Check :size="16" class="text-primary" />
                                 No credit card required
                             </span>
                             <span class="flex items-center gap-2">
-                                <Check :size="16" class="text-[#00FFB2]" />
+                                <Check :size="16" class="text-primary" />
                                 Free forever plan
                             </span>
                         </div>
@@ -447,15 +451,15 @@ const toggleFaq = (index: number) => {
             <div class="max-w-6xl mx-auto">
                 <div class="flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
                     <div class="flex items-center gap-3">
-                        <img src="/images/logo2.svg" alt="Nabungo Logo" class="h-6" />
+                        <img src="/images/logo.svg" alt="Nabungo Logo" class="h-6" />
                     </div>
                     <p class="text-[#71717A] text-sm">
                         © {{ new Date().getFullYear() }} Nabungo. All rights reserved.
                     </p>
                     <div class="flex items-center gap-6 text-sm text-[#71717A]">
-                        <a href="#" class="hover:text-[#00FFB2] transition-colors">Privacy</a>
-                        <a href="#" class="hover:text-[#00FFB2] transition-colors">Terms</a>
-                        <a href="#" class="hover:text-[#00FFB2] transition-colors">Contact</a>
+                        <a href="#" class="hover:text-primary transition-colors">Privacy</a>
+                        <a href="#" class="hover:text-primary transition-colors">Terms</a>
+                        <a href="#" class="hover:text-primary transition-colors">Contact</a>
                     </div>
                 </div>
             </div>

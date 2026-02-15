@@ -124,22 +124,22 @@ class DashboardController extends Controller
         return [
             'totalBalance' => [
                 'value' => $totalBalance,
-                'change' => $balanceChange,
+                'change' => number_format($balanceChange, 2),
                 'trend' => $balanceChange >= 0 ? 'up' : 'down',
             ],
             'income' => [
                 'value' => $currentIncome,
-                'change' => $incomeChange,
+                'change' => number_format($incomeChange, 2),
                 'trend' => $incomeChange >= 0 ? 'up' : 'down',
             ],
             'expense' => [
                 'value' => $currentExpense,
-                'change' => $expenseChange,
+                'change' => number_format($expenseChange, 2),
                 'trend' => $expenseChange <= 0 ? 'up' : 'down', // Lower expense is better
             ],
             'savingsRate' => [
                 'value' => $savingsRate,
-                'change' => $savingsRateChange,
+                'change' => number_format($savingsRateChange, 2),
                 'trend' => $savingsRateChange >= 0 ? 'up' : 'down',
             ],
         ];
