@@ -82,7 +82,7 @@ const navLinks = [
                         </button>
 
                         <!-- Desktop Buttons -->
-                        <Link :href="isAuthenticated ? route('dashboard') : route('login')">
+                        <Link :href="isAuthenticated ? route('dashboard.index') : route('login')">
                             <button
                                 class="hidden md:inline-flex items-center bg-primary rounded-full px-6 py-2 transition text-black font-dm-sans font-medium border-[2px] border-[rgba(255, 255, 255, 0.12)] cursor-pointer hover:scale-105">
                                 {{ isAuthenticated ? 'Dashboard' : 'Log In' }}

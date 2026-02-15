@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import {
     SidebarGroup,
     SidebarGroupContent,
+    SidebarGroupLabel,
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
@@ -50,7 +51,7 @@ const openTransactionDialog = (type: 'income' | 'expense' | 'transfer') => {
                         <DropdownMenuTrigger as-child>
                             <Button size="sm" class="w-full justify-start">
                                 <IconCirclePlusFilled class="size-5 mr-2" />
-                                <span>New Transaction</span>
+                                <span>Transaction</span>
                             </Button>
                             <DropdownMenuContent align="end" class="w-52">
                                 <DropdownMenuItem @click="openTransactionDialog('income')">
@@ -70,6 +71,7 @@ const openTransactionDialog = (type: 'income' | 'expense' | 'transfer') => {
                     </DropdownMenu>
                 </SidebarMenuItem>
             </SidebarMenu>
+            <SidebarGroupLabel>Main Menu</SidebarGroupLabel>
             <SidebarMenu>
                 <SidebarMenuItem v-for="item in items" :key="item.title">
                     <SidebarMenuButton :tooltip="item.title" as-child :is-active="item.url === page.url">
@@ -83,12 +85,8 @@ const openTransactionDialog = (type: 'income' | 'expense' | 'transfer') => {
         </SidebarGroupContent>
     </SidebarGroup>
 
-    <FormDialog
-        v-model:open="dialogOpen"
-        :header="{
-            title: 'Create New Transaction',
-            description: 'Add a new transaction to your account'
-        }"
-        :initial-type="transactionType"
-    />
+    <FormDialog v-model:open="dialogOpen" :header="{
+        title: 'Create New Transaction',
+        description: 'Add a new transaction to your account'
+    }" :initial-type="transactionType" />
 </template>

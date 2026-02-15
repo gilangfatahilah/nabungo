@@ -200,20 +200,10 @@ const toggleFaq = (index: number) => {
                     </a>
                 </div>
 
-                <!-- Trust Badges -->
-                <div class="flex flex-col items-center gap-4">
-                    <div class="flex items-center gap-1">
-                        <Star v-for="i in 5" :key="i" :size="18" class="fill-[#FFD700] text-[#FFD700]" />
-                    </div>
-                    <p class="text-sm text-[#71717A]">
-                        Trusted by <span class="text-white font-semibold">10,000+</span> users to
-                        manage their finances
-                    </p>
-                </div>
             </div>
 
             <!-- Dashboard Preview -->
-            <div class="relative w-full max-w-6xl mx-auto mt-16 px-4">
+            <div class="relative w-full max-w-6xl mx-auto mt-4 px-4">
                 <div class="relative rounded-2xl overflow-hidden shadow-2xl shadow-black/50">
                     <!-- Glow effect -->
                     <div

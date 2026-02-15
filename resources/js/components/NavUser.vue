@@ -27,6 +27,8 @@ import {
     SidebarMenuItem,
     useSidebar,
 } from '@/components/ui/sidebar'
+import { Settings } from "lucide-vue-next"
+import { Link } from "@inertiajs/vue3"
 
 export interface User {
     name: string
@@ -36,6 +38,10 @@ export interface User {
 
 defineProps<{
     user: User
+}>()
+
+defineEmits<{
+    logout: []
 }>()
 
 const { isMobile } = useSidebar()
@@ -84,20 +90,15 @@ const { isMobile } = useSidebar()
                     <DropdownMenuSeparator />
                     <DropdownMenuGroup>
                         <DropdownMenuItem>
-                            <IconUserCircle />
-                            Account
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                            <IconCreditCard />
-                            Billing
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                            <IconNotification />
-                            Notifications
+                            <Link href="/settings" class="flex items-center gap-2">
+
+                                <Settings />
+                                Settings
+                            </Link>
                         </DropdownMenuItem>
                     </DropdownMenuGroup>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem>
+                    <DropdownMenuItem @click="$emit('logout')">
                         <IconLogout />
                         Log out
                     </DropdownMenuItem>

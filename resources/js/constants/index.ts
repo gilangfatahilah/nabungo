@@ -1,5 +1,5 @@
 import { NavItem } from '@/types';
-import { ArrowLeftRight, Blocks, ClipboardList, FileClock, HandCoins, LayoutGrid, SquarePercent, WalletMinimal, } from 'lucide-vue-next';
+import { ArrowLeftRight, Blocks, ChartLine, ClipboardList, FileClock, HandCoins, LayoutGrid, Logs, Settings, SquarePercent, WalletMinimal, } from 'lucide-vue-next';
 
 const mainNavItems: NavItem[] = [
     {
@@ -37,11 +37,24 @@ const mainNavItems: NavItem[] = [
         url: '/debt',
         icon: SquarePercent,
     },
+];
+
+const secondaryNavItems: NavItem[] = [
     {
-        title: 'History',
+        title: 'Reports',
+        url: '/report',
+        icon: ChartLine,
+    },
+    {
+        title: 'Transaction History',
         url: '/history',
         icon: FileClock,
     },
-];
+    {
+        title: 'Activity Log',
+        url: '/activity-log',
+        icon: Logs,
+    },
+]
 
-export { mainNavItems };
+export { mainNavItems, secondaryNavItems };
