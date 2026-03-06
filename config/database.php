@@ -2,6 +2,18 @@
 
 use Illuminate\Support\Str;
 
+// Parse DATABASE_URL for PostgreSQL (Railway, Heroku, etc.)
+if ($databaseUrl = env('DATABASE_URL')) {
+    $url = parse_url($databaseUrl);
+
+    putenv('DB_CONNECTION=pgsql');
+    putenv('DB_HOST=' . ($url['host'] ?? ''));
+    putenv('DB_PORT=' . ($url['port'] ?? '5432'));
+    putenv('DB_DATABASE=' . ltrim($url['path'] ?? '', '/'));
+    putenv('DB_USERNAME=' . ($url['user'] ?? ''));
+    putenv('DB_PASSWORD=' . ($url['pass'] ?? ''));
+}
+
 return [
 
   /*
@@ -16,7 +28,7 @@ return [
   |
   */
 
-  'default' => env('DB_CONNECTION', 'sqlite'),
+  'default' => env('DB_CONNECTION', 'pgsql'),
 
   /*
   |--------------------------------------------------------------------------
@@ -87,17 +99,17 @@ return [
       'url' => env('DB_URL'),
       'host' => env('DB_HOST', '127.0.0.1'),
       'port' => env('DB_PORT', '5432'),
-      'database' => env('DB_DATABASE', 'laravel'),
-      'username' => env('DB_USERNAME', 'root'),
+      'database' => env('DB_DATABASE', 'nabungo'),
+      'username' => env('DB_USERNAME', 'postgres'),
       'password' => env('DB_PASSWORD', ''),
       'charset' => env('DB_CHARSET', 'utf8'),
       'prefix' => '',
       'prefix_indexes' => true,
       'search_path' => 'public',
-      'sslmode' => 'require',
-      'options' => extension_loaded('pdo_pgsql') ? [
-        PDO::ATTR_EMULATE_PREPARES => true,
-      ] : [],
+      'sslmode' => env('DB_SSLMODE', 'prefer'),
+      'options' => extension_loaded('pdo_pgsql') ? array_filter([
+        PDO::ATTR_PERSISTENT => env('DB_PERSISTENT', false),
+      ]) : [],
     ],
 
     'sqlsrv' => [

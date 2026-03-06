@@ -16,15 +16,7 @@ use Inertia\Inertia;
 
 class BudgetController extends Controller
 {
-  /**
-   * Validate account owner.
-   */
-  protected function authorizeAccess(Budget $budget)
-  {
-    if ($budget->user_id !== Auth::id()) {
-      abort(403, 'Unauthorized');
-    }
-  }
+
 
   /**
    * Display a listing of the resource.
@@ -36,7 +28,9 @@ class BudgetController extends Controller
     $filters = FilterParser::parseFilters($request->get('filters', []), $schema);
 
     $query = Budget::query()
-      ->with('category')->where('user_id', Auth::id());
+      ->with('category')
+      ->withExpenseData()
+      ->where('user_id', Auth::id());
 
     if (!empty($filters)) {
       $query = QueryFilters::apply($query, $filters, $schema);
@@ -58,6 +52,14 @@ class BudgetController extends Controller
     $budgets = $query->orderBy('created_at', 'desc')
       ->paginate($request->get('per_page', 10))
       ->withQueryString();
+
+    // Calculate usage and format expense data for frontend
+    $budgets->getCollection()->transform(function ($budget) {
+      $totalExpense = $budget->total_expense ?? 0;
+      $budget->total_expense = $totalExpense;
+      $budget->usage = $budget->calculateUsage($totalExpense);
+      return $budget;
+    });
 
     $filterSchema = FilterParser::prepareSchemaForFrontend($schema);
 
@@ -90,7 +92,7 @@ class BudgetController extends Controller
    */
   public function update(UpdateRequest $request, Budget $budget)
   {
-    $this->authorizeAccess($budget);
+    $this->authorize('update', $budget);
     $validated = $request->validated();
 
     if (isset($validated['month'])) {
@@ -106,7 +108,7 @@ class BudgetController extends Controller
    */
   public function destroy(Budget $budget)
   {
-    $this->authorizeAccess($budget);
+    $this->authorize('delete', $budget);
 
     $budget->delete();
     return to_route('budget.index');

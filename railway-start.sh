@@ -1,13 +1,7 @@
 #!/bin/bash
 set -e
 
-if [ ! -f /app/database/database.sqlite ]; then
-    echo "Creating database file..."
-    mkdir -p /app/database
-    touch /app/database/database.sqlite
-    chmod 666 /app/database/database.sqlite
-fi
-
+echo "Checking database connection..."
 php artisan migrate --force
 # php artisan db:seed --force
 

@@ -18,15 +18,7 @@ class GoalController extends Controller
 {
   public function __construct(private TransactionService $transactionService) {}
 
-  /**
-   * Validate account owner.
-   */
-  protected function authorizeAccess(Goal $goal)
-  {
-    if ($goal->user_id !== Auth::id()) {
-      abort(403, 'Unauthorized');
-    }
-  }
+
 
   /**
    * Display a listing of the resource.
@@ -104,7 +96,7 @@ class GoalController extends Controller
    */
   public function update(UpdateRequest $request, Goal $goal)
   {
-    $this->authorizeAccess($goal);
+    $this->authorize('update', $goal);
 
     DB::beginTransaction();
     try {
@@ -132,7 +124,7 @@ class GoalController extends Controller
    */
   public function destroy(Goal $goal)
   {
-    $this->authorizeAccess($goal);
+    $this->authorize('delete', $goal);
 
     DB::beginTransaction();
     try {

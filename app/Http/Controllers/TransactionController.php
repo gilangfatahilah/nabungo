@@ -8,6 +8,7 @@ use App\Http\Requests\Transaction\UpdateRequest;
 use App\Models\Transaction;
 use App\Helpers\QueryFilters;
 use App\Services\TransactionService;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
@@ -16,6 +17,8 @@ use Inertia\Inertia;
 
 class TransactionController extends Controller
 {
+  use AuthorizesRequests;
+
   public function __construct(private TransactionService $service) {}
 
   /**
@@ -80,7 +83,7 @@ class TransactionController extends Controller
   {
     try {
       $this->service->create($request->validated());
-      return to_route('transaction.index')
+      return redirect()->back()
         ->with('success', 'Transaksi berhasil ditambahkan');
     } catch (\Exception $e) {
       return back()->withErrors(['error' => $e->getMessage()]);
@@ -89,6 +92,8 @@ class TransactionController extends Controller
 
   public function update(UpdateRequest $request, Transaction $transaction)
   {
+    $this->authorize('update', $transaction);
+
     try {
       $this->service->update($transaction, $request->validated());
       return to_route('transaction.index')
@@ -100,6 +105,8 @@ class TransactionController extends Controller
 
   public function destroy(Transaction $transaction)
   {
+    $this->authorize('delete', $transaction);
+
     try {
       $this->service->delete($transaction);
       return to_route('transaction.index')
