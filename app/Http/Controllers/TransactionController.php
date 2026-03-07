@@ -2,16 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\FilterParser;
 use App\Http\Requests\Transaction\StoreRequest;
 use App\Http\Requests\Transaction\UpdateRequest;
 use App\Models\Transaction;
-use App\Helpers\QueryFilters;
 use App\Services\TransactionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
-use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class TransactionController extends Controller
@@ -19,59 +16,30 @@ class TransactionController extends Controller
   public function __construct(private TransactionService $service) {}
 
   /**
-   * Display a listing of transactions with filters
+   * Display a listing of transactions with filters.
    */
   public function index(Request $request)
   {
     try {
-      $schema = FilterParser::getFilterSchema(Transaction::class);
-
-      $filters = FilterParser::parseFilters(
-        $request->get('filters', []),
-        $schema
-      );
-
-      $query = Transaction::query()
-        ->with([
-          'account:id,name',
-          'accountTarget:id,name',
-          'category:id,name'
-        ])
-        ->where('user_id', Auth::id());
-
-      if (!empty($filters)) {
-        $query = QueryFilters::apply($query, $filters, $schema);
-      }
-
-      $transactions = $query
-        ->orderBy('transaction_date', 'desc')
-        ->paginate($request->get('per_page', 10))
-        ->withQueryString();
-
-      $filterSchema = FilterParser::prepareSchemaForFrontend($schema);
+      $data = $this->service->getFilteredTransactions($request);
 
       return Inertia::render('transaction/Index', [
-        'transactions' => $transactions,
-        'filters' => $filters,
-        'filterSchema' => $filterSchema,
-        'query' => $request->query(),
-        'meta' => [
-          'total_filters' => count($filters),
-          'has_filters' => !empty($filters),
-        ]
+        'transactions' => $data['transactions'],
+        'filters'      => $data['filters'],
+        'filterSchema' => $data['filterSchema'],
+        'query'        => $request->query(),
       ]);
     } catch (ValidationException $e) {
       return back()->withErrors([
-        'filters' => 'Invalid filter format: ' . $e->getMessage()
+        'filters' => 'Invalid filter format: ' . $e->getMessage(),
       ]);
     } catch (\Exception $e) {
-      Log::error('Transaction filter error: ' . $e->getMessage(), [
+      Log::error('Transaction index error: ' . $e->getMessage(), [
         'filters' => $request->get('filters', []),
-        'user_id' => Auth::id(),
       ]);
 
       return back()->withErrors([
-        'filters' => 'An error occurred while processing filters.'
+        'filters' => 'An error occurred while processing filters.',
       ]);
     }
   }

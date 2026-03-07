@@ -2,14 +2,52 @@
 
 namespace App\Services;
 
+use App\Helpers\FilterParser;
+use App\Helpers\QueryFilters;
 use App\Models\Account;
 use App\Models\AccountHistory;
 use App\Models\Transaction;
+use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class TransactionService
 {
+  /**
+   * Retrieve a paginated, filtered list of transactions for the authenticated user.
+   *
+   * @return array{ transactions: LengthAwarePaginator, filters: array, filterSchema: array }
+   */
+  public function getFilteredTransactions(Request $request): array
+  {
+    $schema  = FilterParser::getFilterSchema(Transaction::class);
+    $filters = FilterParser::parseFilters($request->get('filters', []), $schema);
+
+    $query = Transaction::query()
+      ->with([
+        'account:id,name',
+        'accountTarget:id,name',
+        'category:id,name',
+      ])
+      ->where('user_id', Auth::id());
+
+    if (!empty($filters)) {
+      $query = QueryFilters::apply($query, $filters, $schema);
+    }
+
+    $transactions = $query
+      ->orderBy('transaction_date', 'desc')
+      ->paginate($request->get('per_page', 10))
+      ->withQueryString();
+
+    return [
+      'transactions' => $transactions,
+      'filters'      => $filters,
+      'filterSchema' => FilterParser::prepareSchemaForFrontend($schema),
+    ];
+  }
+
   /**
    * Create a history record for the transaction.
    *
