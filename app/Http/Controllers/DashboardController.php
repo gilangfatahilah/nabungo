@@ -13,7 +13,7 @@ class DashboardController extends Controller
 {
     /**
      * Get the date format expression based on database driver.
-     * Supports MySQL and SQLite.
+     * Supports PostgreSQL, MySQL, MariaDB, and SQLite.
      */
     private function getDateFormatExpression(string $column, string $format): string
     {
@@ -22,6 +22,17 @@ class DashboardController extends Controller
         if ($driver === 'sqlite') {
             // SQLite uses strftime
             return "strftime('{$format}', {$column})";
+        }
+
+        if ($driver === 'pgsql') {
+            // PostgreSQL uses to_char with different format
+            // Convert strftime format to PostgreSQL format
+            $pgFormat = str_replace(
+                ['%Y', '%m', '%d'],
+                ['YYYY', 'MM', 'DD'],
+                $format
+            );
+            return "to_char({$column}, '{$pgFormat}')";
         }
 
         // MySQL/MariaDB uses DATE_FORMAT

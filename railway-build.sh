@@ -6,10 +6,9 @@ composer install --no-dev --optimize-autoloader
 npm ci
 npm run build
 
-echo "Setting up database..."
-mkdir -p database
-touch database/database.sqlite
-chmod 777 database/database.sqlite
+echo "Setting up database connection..."
+# PostgreSQL doesn't need file creation
+# Database should be provisioned by Railway
 
 echo "Optimizing Laravel..."
 php artisan config:cache

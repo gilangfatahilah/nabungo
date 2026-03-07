@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'uploadthing' => [
+        'secret' => env('UPLOADTHING_SECRET'),
+        'token' => env('UPLOADTHING_TOKEN'),
+    ],
+
 ];

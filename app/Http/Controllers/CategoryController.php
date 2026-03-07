@@ -12,15 +12,7 @@ use Inertia\Inertia;
 
 class CategoryController extends Controller
 {
-  /**
-   * Validate account owner.
-   */
-  protected function authorizeAccess(Category $category)
-  {
-    if ($category->user_id !== Auth::id()) {
-      abort(403, 'Unauthorized');
-    }
-  }
+
 
   /**
    * Display a listing of the resource.
@@ -64,7 +56,7 @@ class CategoryController extends Controller
    */
   public function update(UpdateRequest $request, Category $category)
   {
-    $this->authorizeAccess($category);
+    $this->authorize('update', $category);
 
     $category->update($request->validated());
     return to_route('category.index');
@@ -75,7 +67,7 @@ class CategoryController extends Controller
    */
   public function destroy(Category $category)
   {
-    $this->authorizeAccess($category);
+    $this->authorize('delete', $category);
 
     $category->delete();
     return to_route('category.index');

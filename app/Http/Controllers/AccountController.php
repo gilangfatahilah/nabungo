@@ -14,15 +14,6 @@ use Inertia\Inertia;
 
 class AccountController extends Controller
 {
-  /**
-   * Validate account owner.
-   */
-  protected function authorizeAccess(Account $account)
-  {
-    if ($account->user_id !== Auth::id()) {
-      abort(403, 'Unauthorized');
-    }
-  }
 
   /**
    * Display a listing of the resource.
@@ -80,7 +71,7 @@ class AccountController extends Controller
    */
   public function update(UpdateRequest $request, Account $account)
   {
-    $this->authorizeAccess($account);
+    $this->authorize('update', $account);
 
     $account->update($request->validated());
     return to_route('account.index');
@@ -91,7 +82,7 @@ class AccountController extends Controller
    */
   public function destroy(Account $account)
   {
-    $this->authorizeAccess($account);
+    $this->authorize('delete', $account);
 
     $account->delete();
 
@@ -135,7 +126,7 @@ class AccountController extends Controller
 
   public function transactionSummary(Account $account, Request $request)
   {
-    $this->authorizeAccess($account);
+    $this->authorize('view', $account);
 
     $month = $request->input('month', now()->month);
     $year = $request->input('year', now()->year);
