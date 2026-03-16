@@ -2,37 +2,30 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
 use App\Http\Requests\Category\StoreRequest;
 use App\Http\Requests\Category\UpdateRequest;
-
+use App\Models\Category;
+use App\Services\CategoryService;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class CategoryController extends Controller
 {
+  use AuthorizesRequests;
 
+  public function __construct(private CategoryService $service) {}
 
   /**
    * Display a listing of the resource.
    */
   public function index(Request $request)
   {
-    $query = Category::query()
-      ->where('user_id', Auth::id());
-
-    if ($request->filled('search')) {
-      $query->where('name', 'LIKE', '%' . $request->get('search') . '%')->orWhere('type', 'LIKE', '%' . $request->get('search') . '%');
-    }
-
-    $categories = $query->orderBy('created_at', 'desc')
-      ->paginate($request->get('per_page', 10))
-      ->withQueryString();
+    $data = $this->service->getFilteredCategories($request);
 
     return Inertia::render('category/Index', [
-      'categories' => $categories,
-      'query' => $request->query(),
+      'categories' => $data['categories'],
+      'query'      => $request->query(),
     ]);
   }
 
@@ -41,12 +34,7 @@ class CategoryController extends Controller
    */
   public function store(StoreRequest $request)
   {
-    $validated = $request->validated();
-    Category::create([
-      'user_id' => Auth::id(),
-      'name' => $validated['name'],
-      'type' => $validated['type'],
-    ]);
+    $this->service->create($request->validated());
 
     return to_route('category.index');
   }
@@ -58,7 +46,8 @@ class CategoryController extends Controller
   {
     $this->authorize('update', $category);
 
-    $category->update($request->validated());
+    $this->service->update($category, $request->validated());
+
     return to_route('category.index');
   }
 
@@ -69,40 +58,28 @@ class CategoryController extends Controller
   {
     $this->authorize('delete', $category);
 
-    $category->delete();
+    $this->service->delete($category);
+
     return to_route('category.index');
   }
 
   public function multipleDestroy(Request $request)
   {
     $request->validate([
-      'ids' => 'required|array',
+      'ids'   => 'required|array',
       'ids.*' => 'integer|exists:categories,id',
     ]);
 
-    Category::whereIn('id', $request->input('ids'))->delete();
+    $this->service->deleteMany($request->input('ids'));
 
     return to_route('category.index');
   }
 
   public function options(Request $request)
   {
-    $query = Category::query()->select('id', 'name');
-
-    if ($request->filled('type')) {
-      $query->where('type', $request->type);
-    }
-
-    $categories = $query->get()->map(function ($category) {
-      return [
-        'label' => $category->name,
-        'value' => $category->id,
-      ];
-    });
-
     return response()->json([
       'success' => true,
-      'data' => $categories,
+      'data'    => $this->service->getOptions($request),
     ]);
   }
 }

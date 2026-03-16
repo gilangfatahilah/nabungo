@@ -26,13 +26,11 @@ interface Props {
 const props = defineProps<Props>();
 const open = defineModel<boolean>("open");
 
-const { defaultValues } = props;
-
 const form = useForm({
-  title: defaultValues?.title,
-  target_amount: defaultValues?.target_amount,
-  due_date: defaultValues?.due_date ? new Date(defaultValues.due_date) : new Date(),
-  notes: defaultValues?.notes,
+  title: props.defaultValues?.title,
+  target_amount: props.defaultValues?.target_amount,
+  due_date: props.defaultValues?.due_date ? new Date(props.defaultValues.due_date) : new Date(),
+  notes: props.defaultValues?.notes,
 });
 
 const handleClose = (value: boolean) => {
@@ -41,7 +39,7 @@ const handleClose = (value: boolean) => {
 };
 
 const handleSubmit = () => {
-  if (!defaultValues) {
+  if (!props.defaultValues) {
     form.post(route("goal.store"), {
       preserveScroll: true,
       onSuccess: () => {
@@ -53,7 +51,7 @@ const handleSubmit = () => {
       },
     });
   } else {
-    form.put(route("goal.update", { id: defaultValues.id }), {
+    form.put(route("goal.update", { goal: props.defaultValues.id }), {
       preserveScroll: true,
       onSuccess: () => {
         toast.success("Success, Goal has successfully updated.");
@@ -70,14 +68,12 @@ watch(
   () => props.defaultValues,
   (newValues) => {
     if (newValues) {
-      const values = {
+      form.defaults({
         title: newValues.title,
         target_amount: newValues.target_amount,
         due_date: newValues.due_date ? new Date(newValues.due_date) : new Date(),
         notes: newValues.notes,
-      };
-
-      form.defaults(values);
+      });
     } else {
       form.reset();
     }

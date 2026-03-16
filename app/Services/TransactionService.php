@@ -102,8 +102,15 @@ class TransactionService
 
     if ($direction === 'in') {
       $goal->increment('saved_amount', $amount);
+      $goal->refresh();
+      if ($goal->saved_amount >= $goal->target_amount && $goal->status === 'ongoing') {
+        $goal->update(['status' => 'achieved']);
+      }
     } elseif ($direction === 'out') {
-      $goal->decrement('saved_amount', $amount);
+      $safeAmount = min($amount, $goal->saved_amount);
+      if ($safeAmount > 0) {
+        $goal->decrement('saved_amount', $safeAmount);
+      }
     }
   }
 
@@ -193,13 +200,18 @@ class TransactionService
 
     if ($transaction->type === 'income') {
       $account->decrement('balance', $transaction->amount);
+      $this->updateGoalSavedAmount($account, $transaction->amount, 'out');
     } elseif ($transaction->type === 'expense') {
       $account->increment('balance', $transaction->amount);
+      $this->updateGoalSavedAmount($account, $transaction->amount, 'in');
     } elseif ($transaction->type === 'transfer') {
       $accountTarget = Account::find($transaction->account_target_id);
 
       $account->increment('balance', $transaction->amount);
+      $this->updateGoalSavedAmount($account, $transaction->amount, 'in');
+
       $accountTarget->decrement('balance', $transaction->amount);
+      $this->updateGoalSavedAmount($accountTarget, $transaction->amount, 'out');
     }
   }
 

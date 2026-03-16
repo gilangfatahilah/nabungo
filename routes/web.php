@@ -47,6 +47,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
   Route::resource('transaction', TransactionController::class);
 
   // Goal
+  Route::delete('goal/multiple', [GoalController::class, 'multipleDestroy'])->name('goal.multiple-destroy');
+  Route::patch('goal/{goal}/cancel', [GoalController::class, 'cancel'])->name('goal.cancel');
   Route::resource('goal', GoalController::class);
 
   // Activity Log

@@ -6,7 +6,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import DataTableColumnHeader from '@/components/common/data-table/DataTableColumnHeader.vue';
 import { formatIdr } from '@/lib/utils';
 import { Progress } from '@/components/ui/progress';
-// import RowActions from './RowActions.vue';
+import RowActions from './RowActions.vue';
 import { Badge, BadgeVariants } from '@/components/ui/badge';
 import { AlarmClock, AlarmClockCheck, AlarmClockOff } from 'lucide-vue-next';
 
@@ -124,9 +124,9 @@ export const columns: ColumnDef<Goal>[] = [
       );
     },
   },
-  // {
-  //   id: 'actions',
-  //   header: 'Actions',
-  //   cell: ({ row }) => h(RowActions, { row: row.original }),
-  // },
+  {
+    id: 'actions',
+    header: 'Actions',
+    cell: ({ row }) => h(RowActions, { row: row.original }),
+  },
 ];

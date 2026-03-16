@@ -2,21 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\FilterParser;
-use App\Helpers\QueryFilters;
 use App\Http\Requests\Goal\StoreRequest;
 use App\Http\Requests\Goal\UpdateRequest;
-use App\Models\Account;
 use App\Models\Goal;
-use App\Services\TransactionService;
+use App\Services\GoalService;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class GoalController extends Controller
 {
-  public function __construct(private TransactionService $transactionService) {}
+  use AuthorizesRequests;
+
+  public function __construct(private GoalService $service) {}
 
 
 
@@ -25,32 +23,13 @@ class GoalController extends Controller
    */
   public function index(Request $request)
   {
-    $schema = FilterParser::getFilterSchema(Goal::class);
-
-    $filters = FilterParser::parseFilters($request->get('filters', []), $schema);
-
-    $query = Goal::query()
-      ->with('account:id,name,type,balance')->where('user_id', Auth::id());
-
-    if (!empty($filters)) {
-      $query = QueryFilters::apply($query, $filters, $schema);
-    }
-
-    if ($request->filled('search')) {
-      $query->where('title', 'LIKE', '%' . $request->get('search') . '%');
-    }
-
-    $goals = $query->orderBy('created_at', 'desc')
-      ->paginate($request->get('per_page', 10))
-      ->withQueryString();
-
-    $filterSchema = FilterParser::prepareSchemaForFrontend($schema);
+    $data = $this->service->getFilteredGoals($request);
 
     return Inertia::render('goal/Index', [
-      'goals' => $goals,
-      'query' => $request->query(),
-      'filters' => $filters,
-      'filterSchema' => $filterSchema,
+      'goals'        => $data['goals'],
+      'filters'      => $data['filters'],
+      'filterSchema' => $data['filterSchema'],
+      'query'        => $request->query(),
     ]);
   }
 
@@ -59,34 +38,13 @@ class GoalController extends Controller
    */
   public function store(StoreRequest $request)
   {
-    DB::beginTransaction();
+    $this->authorize('create', Goal::class);
+
     try {
-      $validated = $request->validated();
-
-      $account = Account::create([
-        'user_id' => Auth::id(),
-        'name'    => '[Goal] ' . $validated['title'],
-        'type'    => 'goal',
-        'balance' => 0,
-      ]);
-
-      Goal::create([
-        'user_id'       => Auth::id(),
-        'account_id'    => $account->id,
-        'title'         => $validated['title'],
-        'target_amount' => $validated['target_amount'],
-        'saved_amount'  => 0,
-        'due_date'      => $validated['due_date'],
-        'notes'         => $validated['notes'] ?? null,
-        'status'        => 'ongoing',
-      ]);
-
-      DB::commit();
+      $this->service->create($request->validated());
       return to_route('goal.index');
     } catch (\Throwable $th) {
-      DB::rollBack();
       report($th);
-      dd($th->getMessage());
       return back()->withErrors(['error' => 'Gagal membuat goal.']);
     }
   }
@@ -98,24 +56,28 @@ class GoalController extends Controller
   {
     $this->authorize('update', $goal);
 
-    DB::beginTransaction();
     try {
-      $validated = $request->validated();
-
-      $goal->update([
-        'title'         => $validated['title'] ?? $goal->title,
-        'target_amount' => $validated['target_amount'] ?? $goal->target_amount,
-        'due_date'      => $validated['due_date'] ?? $goal->due_date,
-        'notes'         => $validated['notes'] ?? $goal->notes,
-        'status'        => $validated['status'] ?? $goal->status,
-      ]);
-
-      DB::commit();
+      $this->service->update($goal, $request->validated());
       return to_route('goal.index');
     } catch (\Throwable $th) {
-      DB::rollBack();
       report($th);
       return back()->withErrors(['error' => 'Gagal memperbarui goal.']);
+    }
+  }
+
+  /**
+   * Cancel the specified goal (marks as cancelled without deleting).
+   */
+  public function cancel(Goal $goal)
+  {
+    $this->authorize('update', $goal);
+
+    try {
+      $this->service->cancel($goal);
+      return to_route('goal.index');
+    } catch (\Throwable $th) {
+      report($th);
+      return back()->withErrors(['error' => 'Gagal membatalkan goal.']);
     }
   }
 
@@ -126,25 +88,10 @@ class GoalController extends Controller
   {
     $this->authorize('delete', $goal);
 
-    DB::beginTransaction();
     try {
-      $fundTransactions = $goal->incomingTransactions()->get();
-
-      foreach ($fundTransactions as $transaction) {
-        $this->transactionService->rollbackBalance($transaction);
-        $transaction->delete();
-      }
-
-      if ($goal->account) {
-        $goal->account->delete();
-      }
-
-      $goal->delete();
-
-      DB::commit();
+      $this->service->delete($goal);
       return to_route('goal.index');
     } catch (\Throwable $th) {
-      DB::rollBack();
       report($th);
       return back()->withErrors(['error' => 'Gagal menghapus goal.']);
     }
@@ -152,35 +99,18 @@ class GoalController extends Controller
 
   public function multipleDestroy(Request $request)
   {
+    $this->authorize('create', Goal::class);
+
     $ids = $request->input('ids', []);
 
     if (empty($ids)) {
       return back()->withErrors(['error' => 'Tidak ada goals yang dipilih.']);
     }
 
-    DB::beginTransaction();
     try {
-      $goals = Goal::whereIn('id', $ids)
-        ->where('user_id', Auth::id())
-        ->get();
-
-      foreach ($goals as $goal) {
-        foreach ($goal->incomingTransactions as $transaction) {
-          $this->transactionService->rollbackBalance($transaction);
-          $transaction->delete();
-        }
-
-        if ($goal->account) {
-          $goal->account->delete();
-        }
-
-        $goal->delete();
-      }
-
-      DB::commit();
+      $this->service->deleteMany($ids);
       return to_route('goal.index');
     } catch (\Throwable $th) {
-      DB::rollBack();
       report($th);
       return back()->withErrors(['error' => 'Gagal menghapus goals.']);
     }

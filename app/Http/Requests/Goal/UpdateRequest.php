@@ -24,9 +24,8 @@ class UpdateRequest extends FormRequest
     return [
       'title'         => ['required', 'string', 'max:255'],
       'target_amount' => ['required', 'numeric', 'min:1'],
-      'due_date'      => ['nullable', 'date', 'after_or_equal:today'],
+      'due_date'      => ['nullable', 'date'],
       'notes'         => ['nullable', 'string'],
-      'status'        => ['required', 'in:ongoing,cancelled,achieved'],
     ];
   }
 }
