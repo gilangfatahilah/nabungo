@@ -4,11 +4,12 @@ namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\ProfileUpdateRequest;
+use App\Http\Requests\Settings\UpdateAvatarRequest;
+use Cloudinary\Cloudinary;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -52,9 +53,6 @@ class ProfileController extends Controller
 
         $user = $request->user();
 
-        // Delete avatar reference (UploadThing URL)
-        // Note: Implement UploadThing file deletion API if needed
-
         Auth::logout();
 
         $user->delete();
@@ -66,37 +64,60 @@ class ProfileController extends Controller
     }
 
     /**
-     * Update the user's avatar.
-     * Now accepts UploadThing URL instead of file upload.
+     * Upload and update the user's avatar via Cloudinary.
      */
-    public function updateAvatar(Request $request): RedirectResponse
+    public function updateAvatar(UpdateAvatarRequest $request): RedirectResponse
     {
-        $request->validate([
-            'avatar_url' => ['required', 'url'],
-        ]);
-
         $user = $request->user();
 
-        // Note: Old avatar on UploadThing should be deleted via their API if needed
-        // You can implement UploadThing file deletion here if required
+        $cloudinary = new Cloudinary([
+            'cloud' => [
+                'cloud_name' => config('cloudinary.cloud_name'),
+                'api_key'    => config('cloudinary.api_key'),
+                'api_secret' => config('cloudinary.api_secret'),
+            ],
+            'url' => ['secure' => true],
+        ]);
 
-        // Store the UploadThing URL
-        $user->update(['avatar' => $request->avatar_url]);
+        $publicId = 'nabungo/avatars/user_' . $user->id;
+
+        $result = $cloudinary->uploadApi()->upload(
+            $request->file('avatar')->getRealPath(),
+            [
+                'public_id'     => $publicId,
+                'overwrite'     => true,
+                'invalidate'    => true,
+                'resource_type' => 'image',
+            ]
+        );
+
+        $user->update(['avatar' => $result['secure_url']]);
 
         return to_route('profile.edit');
     }
 
     /**
-     * Delete the user's avatar.
+     * Delete the user's avatar from Cloudinary and clear the database field.
      */
     public function deleteAvatar(Request $request): RedirectResponse
     {
         $user = $request->user();
 
         if ($user->avatar) {
-            // Note: If you want to delete the file from UploadThing,
-            // you need to implement their deletion API here
-            // For now, we just remove the reference from database
+            $cloudinary = new Cloudinary([
+                'cloud' => [
+                    'cloud_name' => config('cloudinary.cloud_name'),
+                    'api_key'    => config('cloudinary.api_key'),
+                    'api_secret' => config('cloudinary.api_secret'),
+                ],
+                'url' => ['secure' => true],
+            ]);
+
+            $cloudinary->uploadApi()->destroy(
+                'nabungo/avatars/user_' . $user->id,
+                ['invalidate' => true]
+            );
+
             $user->update(['avatar' => null]);
         }
 
