@@ -9,7 +9,6 @@ import { router } from "@inertiajs/vue3";
 import DataTableViewOptions from "./DataTableViewOptions.vue";
 import ConfirmationDialog from "../dialog/ConfirmationDialog.vue";
 import { toast } from "vue-sonner";
-import MonthRange from "../popover/MonthRange.vue";
 import DataTableFilter, { FieldOption, FilterRow } from "./DataTableFilter.vue";
 
 interface DataTableToolbarProps<TData> {

@@ -76,7 +76,7 @@ const handleAvatarChange = (event: Event) => {
     router.post(route('profile.avatar.update'), formData, {
         forceFormData: true,
         preserveScroll: true,
-        onSuccess: (response) => {
+        onSuccess: () => {
             avatarPreview.value = null;
             toast.success('Avatar updated!', {
                 id: toastId,
