@@ -6,7 +6,10 @@ use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\BudgetController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DebtController;
+use App\Http\Controllers\DebtPaymentController;
 use App\Http\Controllers\GoalController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\TransactionController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -51,8 +54,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
   Route::patch('goal/{goal}/cancel', [GoalController::class, 'cancel'])->name('goal.cancel');
   Route::resource('goal', GoalController::class);
 
+  // Debt
+  Route::delete('debt/multiple', [DebtController::class, 'multipleDestroy'])->name('debt.multiple-destroy');
+  Route::resource('debt', DebtController::class)->except(['create', 'edit', 'show']);
+  Route::post('debt/{debt}/payments', [DebtPaymentController::class, 'store'])->name('debt.payment.store');
+  Route::delete('debt-payment/{debtPayment}', [DebtPaymentController::class, 'destroy'])->name('debt.payment.destroy');
+
   // Activity Log
   Route::get('activity-log', [ActivityLogController::class, 'index'])->name('activity-log.index');
+
+  // Reports
+  Route::get('report', [ReportController::class, 'index'])->name('report.index');
+  Route::get('report/export', [ReportController::class, 'export'])->name('report.export');
 });
 
 require __DIR__ . '/settings.php';

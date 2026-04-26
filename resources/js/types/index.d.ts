@@ -162,6 +162,41 @@ interface Goal {
   account: Account
 }
 
+interface Debt {
+  id: number;
+  user_id: number;
+  title: string;
+  type: 'debt' | 'receivable';
+  amount: number;
+  paid_amount: number;
+  remaining_amount: number;
+  progress: number;
+  contact_name?: string;
+  contact_phone?: string;
+  due_date?: string;
+  formatted_due_date: string;
+  notes?: string;
+  status: 'unpaid' | 'partial' | 'paid';
+  payments_count?: number;
+  payments?: DebtPayment[];
+  created_at: string;
+  updated_at: string;
+}
+
+interface DebtPayment {
+  id: number;
+  user_id: number;
+  debt_id: number;
+  transaction_id?: number;
+  amount: number;
+  payment_date: string;
+  notes?: string;
+  created_at: string;
+  updated_at: string;
+  transaction?: Transaction;
+  debt?: Debt;
+}
+
 export interface ActivityLog {
   id: number;
   log_name: string;
@@ -181,6 +216,6 @@ export interface ActivityLog {
   causer: User;
 }
 
-export { TableResponse, PageQuery, User, Account, AccountHistory, Category, Budget, Transaction, Goal }
+export { TableResponse, PageQuery, User, Account, AccountHistory, Category, Budget, Transaction, Goal, Debt, DebtPayment }
 
 export type BreadcrumbItemType = BreadcrumbItem;
